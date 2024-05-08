@@ -97,8 +97,8 @@ const DoughnutChart = ({
             className={clsx(
               "  absolute left-0 right-0 mx-auto top-[45%]  text-center",
               {
-                "top-[45%] md:top-[54%]": electionResult?.party.length < 10,
-                "top-[35%] md:top-[45%]": electionResult?.party.length >= 10,
+                "top-[52%] md:top-[54%]": electionResult?.party.length < 7,
+                "top-[32%] md:top-[45%]": electionResult?.party.length >= 7,
               }
             )}
           >

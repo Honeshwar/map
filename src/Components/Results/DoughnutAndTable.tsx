@@ -134,6 +134,7 @@ export default function DoughnutAndTable() {
   useEffect(() => {
     if (select_state !== "Select State") {
       const getElectionResultByState = async () => {
+        setLoading(true);
         try {
           const response = await fetch(
             process.env.NEXT_PUBLIC_API_URL +
@@ -149,7 +150,7 @@ export default function DoughnutAndTable() {
           //console.log("error in fetch election result by state", error);
         }
       };
-      setLoading(true);
+
       getElectionResultByState();
     }
   }, [select_state]);
@@ -162,6 +163,7 @@ export default function DoughnutAndTable() {
         : select_constituency.pcNo !== -1)
     ) {
       const getElectionResultByConstituency = async () => {
+        setLoading(true);
         try {
           const response = await fetch(
             process.env.NEXT_PUBLIC_API_URL +
@@ -178,10 +180,10 @@ export default function DoughnutAndTable() {
           extractData(responseData.data, true);
           setLoading(false);
         } catch (error) {
-          //console.log("error in fetch election result by state", error);
+          console.log("error in fetch election result by state", error);
         }
       };
-      setLoading(true);
+
       getElectionResultByConstituency();
     }
   }, [select_constituency]);

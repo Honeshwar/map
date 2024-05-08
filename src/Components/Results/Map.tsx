@@ -24,8 +24,8 @@ export default function Map() {
 
   const mapRef = useRef<any>(null);
   const [viewport, setViewport] = useState({
-    longitude: 78.9629 + 1,
-    latitude: 20.5937 - 5,
+    longitude: windowWidth < 640 ? 78.9629 : 78.9629 + 1,
+    latitude: windowWidth < 640 ? 20.5937 : 20.5937 - 5,
     zoom: 3.5,
   });
   const [layers, setLayers] = useState([]);
@@ -561,11 +561,29 @@ export default function Map() {
   };
 
   const handleResetToInitial = () => {
-    setViewport({
-      longitude: 78.9629 + 1,
-      latitude: 20.5937 - 5,
-      zoom: 3.5,
-    });
+    if (select_sabha === "Lok Sabha") {
+      setViewport({
+        longitude: windowWidth < 640 ? 78.9629 : 78.9629 + 1,
+        latitude: windowWidth < 640 ? 20.5937 : 20.5937 - 5,
+        zoom: 3.5,
+      });
+    } else {
+      const stateCoordinates = STATE_COORDINATES.find(
+        (row) => row.state.toUpperCase() === select_state.toUpperCase()
+      );
+
+      //console.log("stateCoordinates", stateCoordinates);
+      if (!stateCoordinates) return;
+
+      setViewport({
+        latitude: stateCoordinates.latitude,
+        longitude: stateCoordinates.longitude,
+        zoom:
+          windowWidth < 800
+            ? stateCoordinates.zoom * 0.82
+            : stateCoordinates.zoom * 0.82,
+      });
+    }
   };
   return (
     <>
