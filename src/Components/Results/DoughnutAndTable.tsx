@@ -44,7 +44,7 @@ export default function DoughnutAndTable() {
         );
         const responseData = await response.json();
         // //console.log("response data doughnut and table", responseData.data);
-        extractData(responseData.data, true);
+        extractData(responseData.data, false);
         setLoading(false);
       } catch (error) {
         //console.log("error in fetch election result", error);
@@ -83,11 +83,18 @@ export default function DoughnutAndTable() {
       tableData.year.push(year); //year add in table
       for (const obj of data[year]) {
         // for initial data only
-        if (isInitialData && (year == "2020" || year == "2019")) {
-          // doughnutData.year.push(year);
-          doughnutData.seats.push(Number(obj.seats));
-          doughnutData.party.push(obj.party);
-        }
+        // if (isInitialData && (year == "2020" || year == "2019")) {
+        //   // doughnutData.year.push(year);
+        //   doughnutData.seats.push(Number(obj.seats));
+        //   doughnutData.party.push(obj.party);
+        // }
+
+        console.log(
+          !isInitialData,
+          select_election_year === "Select Election year",
+          index === totalYearCount - 1,
+          !yearSelect
+        );
         //dougghnut onluy single year data show
         if (!isInitialData && year == select_election_year) {
           doughnutData.seats.push(Number(obj.seats));
@@ -121,7 +128,7 @@ export default function DoughnutAndTable() {
     }
     // //console.log("table data", tableData);
     setTable(tableData);
-    //console.log("doughnut data", doughnutData);
+    console.log("doughnut data", doughnutData);
     setElectionResult(doughnutData);
 
     let ts = 0;
@@ -143,8 +150,8 @@ export default function DoughnutAndTable() {
               }&state=${select_state}`
           );
           const responseData = await response.json();
-          // //console.log("response data doughnut and table", responseData.data);
-          extractData(responseData.data, true);
+          console.log("response data doughnut and table", responseData.data);
+          extractData(responseData.data, false);
           setLoading(false);
         } catch (error) {
           //console.log("error in fetch election result by state", error);
@@ -177,7 +184,7 @@ export default function DoughnutAndTable() {
           );
           const responseData = await response.json();
           // //console.log("response data doughnut and table", responseData.data);
-          extractData(responseData.data, true);
+          extractData(responseData.data, false);
           setLoading(false);
         } catch (error) {
           console.log("error in fetch election result by state", error);

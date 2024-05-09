@@ -99,6 +99,9 @@ const DoughnutChart = ({
               {
                 "top-[52%] md:top-[54%]": electionResult?.party.length < 7,
                 "top-[32%] md:top-[45%]": electionResult?.party.length >= 7,
+                "top-[31%] md:top-[54%]":
+                  electionResult?.party.length >= 7 &&
+                  select_sabha === "Lok Sabha",
               }
             )}
           >
