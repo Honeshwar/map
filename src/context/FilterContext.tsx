@@ -72,12 +72,13 @@ function FilterContextProvider({ children }: { children: React.ReactNode }) {
       //call api
       const getFilterResult = async () => {
         try {
+          var encodedName = encodeURIComponent(select_state);
           const response = await fetch(
             `${
               process.env.NEXT_PUBLIC_API_URL
             }/result/election-result/filter?election_type=${
               select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-            }&state=${select_state}&constituency=${
+            }&state=${encodedName}&constituency=${
               select_sabha === "Vidhan Sabha"
                 ? select_constituency.acNo
                 : select_constituency.pcNo
@@ -102,7 +103,7 @@ function FilterContextProvider({ children }: { children: React.ReactNode }) {
               }&limit=7&page=` +
               1 +
               "&state=" +
-              select_state +
+              encodedName +
               "&constituency=" +
               (select_sabha === "Vidhan Sabha"
                 ? select_constituency.acNo

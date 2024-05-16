@@ -370,7 +370,18 @@ function checkForExistingKey(length, category) {
       return length === 5;
   }
 }
-export { formateData, convertColumnData, convertRowData };
+
+function debouncing(func, delay) {
+  let timeoutId;
+  return (...args) => {
+    let a = clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => {
+      console.log("called", a);
+      func.apply(null, args);
+    }, delay);
+  };
+}
+export { formateData, convertColumnData, convertRowData, debouncing };
 
 // 1. non existing key remove from formatte function to add in result
 // 2. logic  for row bar charts data

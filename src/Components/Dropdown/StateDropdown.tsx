@@ -100,7 +100,12 @@ export default function StateDropdown() {
                   "bg-white text-[gray]": select_state !== "Select State",
                 }
               )}
-              onClick={() => setSelect_state("Select State")}
+              onClick={() => {
+                resetFilterToInitial(3);
+                setShowStateDropDown(false);
+
+                setSelect_state("Select State");
+              }}
             >
               Select State {select_sabha === "Vidhan Sabha" ? "" : "& UTs"}
             </li>

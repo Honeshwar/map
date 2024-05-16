@@ -236,9 +236,11 @@ export default function Map() {
         setSelect_state(stateName);
       } else if (select_constituency.acNo === -1) {
         if (stateName.toUpperCase() === select_state.toUpperCase()) {
+          const constit =
+            mapResult[object.properties.ST_NAME][object.properties.AC_NO];
           setSelect_constituency({
             acNo: object.properties.AC_NO,
-            acName: object.properties.AC_NAME,
+            acName: constit.acName,
           });
         }
       }

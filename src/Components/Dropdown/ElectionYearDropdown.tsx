@@ -23,6 +23,10 @@ export default function ElectionYearDropdown() {
   const [showCompareDropDown, setShowCompareDropDown] = useState(false);
 
   const [years, setYears] = useState<number[]>([]);
+  const [compareYears, setCompareYears] = useState<number[]>([]);
+  const [currentSelectedYear, setCurrentSelectedYear] = useState<
+    number | string
+  >(select_election_year);
 
   useEffect(() => {
     //toggle sabha selection
@@ -41,35 +45,37 @@ export default function ElectionYearDropdown() {
 
   useEffect(() => {
     const fetchYears = async () => {
-      const response = await fetch(
-        `https://dhruvresearch.com/api/v2/result/year?state=${select_state}&election_type=${
-          select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-        }&constituency=${
-          select_sabha === "Vidhan Sabha"
-            ? select_constituency.acNo
-            : select_constituency.pcNo
-        }`
-      );
-      const responseData = await response.json();
-      // console.log("result", responseData);
-      setYears(responseData.data);
+      try {
+        let urlEncodeStateName = encodeURIComponent(select_state);
+        const response = await fetch(
+          `https://dhruvresearch.com/api/v2/result/year?state=${urlEncodeStateName}&election_type=${
+            select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+          }&constituency=${
+            select_sabha === "Vidhan Sabha"
+              ? select_constituency.acNo
+              : select_constituency.pcNo
+          }`
+        );
+        const responseData = await response.json();
+        // console.log("result", responseData);
+        setYears(responseData.data);
+      } catch (error) {
+        console.log("error in fetch years", error);
+      }
     };
     if (
       (select_sabha === "Vidhan Sabha"
         ? select_constituency.acNo
         : select_constituency.pcNo) !== -1
     ) {
-      try {
-        fetchYears();
-      } catch (error) {
-        console.log("error in fetch years", error);
-      }
+      fetchYears();
+    } else {
+      setYears([]);
+      setCompareYears([]);
+      setCurrentSelectedYear("Select Election year");
     }
   }, [select_constituency]);
-  const [compareYears, setCompareYears] = useState<number[]>([]);
-  const [currentSelectedYear, setCurrentSelectedYear] = useState<
-    number | string
-  >(select_election_year);
+
   const handleSelectElectionYear = (ElectionYear: number) => {
     // resetFilterToInitial(1);
     // setSelect_election_year(ElectionYear);

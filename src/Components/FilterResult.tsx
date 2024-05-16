@@ -124,6 +124,13 @@ export default function FilterResult() {
         setError(false);
 
         setChartLoading(true);
+        const yearString =
+          select_election_year !== "Select Election year"
+            ? `&years=${JSON.stringify([
+                select_election_year,
+                ...select_compare_year,
+              ])}`
+            : "";
         //for charts filter data
         const chartResponse = await fetch(
           `https://dhruvresearch.com/api/v2/result/demographics/filter?election_type=${
@@ -132,14 +139,15 @@ export default function FilterResult() {
             select_sabha === "Vidhan Sabha"
               ? select_constituency.acNo
               : select_constituency.pcNo
-          }&years=${JSON.stringify([
-            select_election_year,
-            ...select_compare_year,
-          ])}`
+          }${yearString}`
         );
         const chartResponseData = await chartResponse.json();
         if (
-          JSON.stringify(chartResponseData.data[select_election_year]) === "{}"
+          JSON.stringify(chartResponseData.data[select_election_year]) ===
+            "{}" ||
+          JSON.stringify(
+            chartResponseData.data[Object.keys(chartResponseData.data)[0]]
+          ) === "{}"
         ) {
           return setError(true);
         }
@@ -175,8 +183,9 @@ export default function FilterResult() {
       select_state !== "Select State" &&
       (select_sabha === "Vidhan Sabha"
         ? select_constituency.acNo !== -1
-        : select_constituency.pcNo !== -1) &&
-      select_election_year !== "Select Election year"
+        : select_constituency.pcNo !== -1)
+      //   &&
+      // select_election_year !== "Select Election year"
     )
       getChartsData();
   }, [
@@ -199,7 +208,7 @@ export default function FilterResult() {
         <h1 className="text-[1rem] md:text-[1.5rem] font-bold text-[#d8ac00] text-center">
           Powered by: Dhruv Research
         </h1>
-
+        {/* 
         {chartLoading ? (
           <Loading />
         ) : error ? (
@@ -241,9 +250,9 @@ export default function FilterResult() {
               // error={error}
             />
           </>
-        )}
+        )} */}
 
-        <ConstituencyTable />
+        {/* <ConstituencyTable /> */}
       </div>
     </section>
   );

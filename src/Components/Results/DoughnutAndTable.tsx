@@ -139,27 +139,29 @@ export default function DoughnutAndTable() {
   };
 
   useEffect(() => {
-    if (select_state !== "Select State") {
-      const getElectionResultByState = async () => {
-        setLoading(true);
-        try {
-          const response = await fetch(
-            process.env.NEXT_PUBLIC_API_URL +
-              `/result/election-result?election_type=${
-                select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-              }&state=${select_state}`
-          );
-          const responseData = await response.json();
-          console.log("response data doughnut and table", responseData.data);
-          extractData(responseData.data, false);
-          setLoading(false);
-        } catch (error) {
-          //console.log("error in fetch election result by state", error);
-        }
-      };
+    // if (select_state !== "Select State") {
+    const getElectionResultByState = async () => {
+      setLoading(true);
+      console.log("state call");
+      try {
+        let encodedName = encodeURIComponent(select_state);
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_API_URL +
+            `/result/election-result?election_type=${
+              select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+            }${select_state !== "Select State" ? `&state=${encodedName}` : ""}`
+        );
+        const responseData = await response.json();
+        console.log("response data doughnut and table", responseData.data);
+        extractData(responseData.data, false);
+        setLoading(false);
+      } catch (error) {
+        //console.log("error in fetch election result by state", error);
+      }
+    };
 
-      getElectionResultByState();
-    }
+    getElectionResultByState();
+    // }
   }, [select_state]);
 
   useEffect(() => {
@@ -170,13 +172,28 @@ export default function DoughnutAndTable() {
         : select_constituency.pcNo !== -1)
     ) {
       const getElectionResultByConstituency = async () => {
+        console.log("assembly call");
         setLoading(true);
         try {
+          // let constitu = "";
+          // if (
+          //   select_sabha === "Vidhan Sabha" &&
+          //   select_constituency.acNo !== -1
+          // ) {
+          //   constitu = `&constituency=${select_constituency.acNo}`;
+          // } else if (
+          //   select_sabha === "LokSabha" &&
+          //   select_constituency.pcNo !== -1
+          // ) {
+          //   constitu = `&constituency=${select_constituency.pcNo}`;
+          // }
+          var encodedName = encodeURIComponent(select_state);
+
           const response = await fetch(
             process.env.NEXT_PUBLIC_API_URL +
               `/result/election-result/filter?election_type=${
                 select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-              }&state=${select_state}&constituency=${
+              }&state=${encodedName}&constituency=${
                 select_sabha === "Vidhan Sabha"
                   ? select_constituency.acNo
                   : select_constituency.pcNo
@@ -192,6 +209,28 @@ export default function DoughnutAndTable() {
       };
 
       getElectionResultByConstituency();
+    } else if (select_state !== "Select State") {
+      const getElectionResultByState = async () => {
+        console.log("assembly/state call");
+        setLoading(true);
+        try {
+          let encodedName = encodeURIComponent(select_state);
+          const response = await fetch(
+            process.env.NEXT_PUBLIC_API_URL +
+              `/result/election-result?election_type=${
+                select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+              }&state=${encodedName}`
+          );
+          const responseData = await response.json();
+          console.log("response data doughnut and table", responseData.data);
+          extractData(responseData.data, false);
+          setLoading(false);
+        } catch (error) {
+          //console.log("error in fetch election result by state", error);
+        }
+      };
+
+      getElectionResultByState();
     }
   }, [select_constituency]);
 
@@ -200,7 +239,7 @@ export default function DoughnutAndTable() {
       {/* && electionResult?.party?.length > 0 */}
       {!loading ? (
         <>
-          <Doughnut electionResult={electionResult} totalSeats={totalSeats} />
+          <Doughnut electionResult={electionResult} totalSeats={200} />
           <Table data={table} />
         </>
       ) : (

@@ -23,15 +23,20 @@ const DoughnutChart = ({
   };
   totalSeats: number;
 }) => {
+  const windowWidth = window.innerWidth;
   //console.log("electionResult", electionResult);
   const { select_sabha } = useFilterContextValue();
   // //console.log("doughnut electionResult", electionResult);
-  let labels = Object.keys(PARTY_ALLIANCE_COLORS);
+  let labels = Object.keys(PARTY_ALLIANCE_COLORS).slice(0, 30);
   let backgroundColor = Object.values(PARTY_ALLIANCE_COLORS); //.slice(0,20)
   let doughnutData = [
     70, 10, 135, 60, 7, 70, 10, 135, 60, 7, 70, 10, 135, 60, 7, 70, 10, 135, 60,
-    7,
+    // 70, 10, 135, 60, 7, 70, 10, 135, 60, 7, 70, 10, 135, 60, 7, 70, 10, 135, 60,
+    // 7,
   ];
+  // labels = [];
+  // backgroundColor = [];
+  // doughnutData = [];
 
   if (electionResult?.party?.length > 0) {
     labels = electionResult.party;
@@ -80,16 +85,47 @@ const DoughnutChart = ({
     },
   } as any;
 
+  const CenterLabelPlugin = {
+    id: "centerLabel",
+    beforeDraw: (chart: any) => {
+      if (chart.config.type !== "doughnut") {
+        return;
+      }
+
+      const ctx = chart.ctx;
+      const width = chart.width;
+      const height = chart.height;
+
+      console.log("wefsad", width, height);
+      ctx.restore();
+      const fontSize = (height / 130).toFixed(2);
+      ctx.font = fontSize + "em sans-serif";
+      ctx.fillStyle = "gray";
+      ctx.textBaseline = "middle";
+
+      const text = "543";
+      const textX = Math.round((width - ctx.measureText(text).width) / 2);
+      const position = Math.ceil(labels.length / 7);
+      const textY =
+        windowWidth < 768
+          ? height / 2 + (20 - (position - 1) * 15)
+          : height / 2 + (40 - (position - 1) * 8);
+      //[]20,5,- 10;
+
+      console.log(fontSize, textX, textY);
+      ctx.fillText(text, textX, textY);
+      ctx.save();
+    },
+  };
+
   // max-w-[400px]
   return (
     <>
       {electionResult?.party?.length > 0 ? (
-        <div className="w-full flex justify-center mx-auto max-h-fit relative    ">
+        <div className="w-full flex justify-center mx-auto max-h-fit relative px-0  md:px-20 ">
           <Doughnut
-            className={clsx(" w-fit mx-auto md:m-0  ", {
-              "max-w-fit": electionResult?.party.length >= 10,
-              "max-h-[200px]": electionResult?.party.length < 10,
-            })}
+            // plugins={[CenterLabelPlugin]}
+            className={clsx(" w-[380px] mx-auto md:m-0 h-fit ", {})}
             data={data}
             options={options}
           />{" "}
@@ -97,11 +133,30 @@ const DoughnutChart = ({
             className={clsx(
               "  absolute left-0 right-0 mx-auto top-[45%]  text-center",
               {
-                "top-[52%] md:top-[54%]": electionResult?.party.length < 7,
-                "top-[32%] md:top-[45%]": electionResult?.party.length >= 7,
-                "top-[31%] md:top-[54%]":
+                "top-[52%] md:top-[65%]": electionResult?.party.length <= 6,
+                // "top-[32%] md:top-[45%]": electionResult?.party.length >= 7,
+                "top-[31%] md:top-[55%]":
                   electionResult?.party.length >= 7 &&
-                  select_sabha === "Lok Sabha",
+                  electionResult?.party.length <= 20,
+                "top-[31%] md:top-[45%]":
+                  electionResult?.party.length >= 21 &&
+                  electionResult?.party.length <= 30,
+                "top-[31%] md:top-[35%]":
+                  electionResult?.party.length >= 31 &&
+                  electionResult?.party.length <= 40,
+
+                "top-[31%] md:top-[25%]":
+                  electionResult?.party.length >= 41 &&
+                  electionResult?.party.length <= 50,
+                "top-[31%] md:top-[15%]":
+                  electionResult?.party.length >= 51 &&
+                  electionResult?.party.length <= 60,
+                "top-[31%] md:top-[5%]":
+                  electionResult?.party.length >= 61 &&
+                  electionResult?.party.length <= 70,
+
+                // &&
+                // select_sabha === "Lok Sabha",
               }
             )}
           >

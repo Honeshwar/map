@@ -50,25 +50,26 @@ export default function ConstituencyTable() {
 
   useEffect(() => {
     const getCandidates = async () => {
-      const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL +
-          `/result/candidates?election_type=${
-            select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-          }&limit=7`
-      );
-      const responseData = await response.json();
-      //console.log("resopnse ", responseData, responseData.data);
+      try {
+        const response = await fetch(
+          process.env.NEXT_PUBLIC_API_URL +
+            `/result/candidates?election_type=${
+              select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+            }&limit=7`
+        );
+        const responseData = await response.json();
+        //console.log("resopnse ", responseData, responseData.data);
 
-      setCurrentData(sortTable(responseData.data.data, filter));
-      setTotalPages(Math.ceil(responseData.data.totalCount / 7));
-      // setTotalPages(responseData.data.previousPage); //totalCOunt/limit
-      setTotalResults(responseData.data.totalCount);
+        setCurrentData(sortTable(responseData.data.data, filter));
+        setTotalPages(Math.ceil(responseData.data.totalCount / 7));
+        // setTotalPages(responseData.data.previousPage); //totalCOunt/limit
+        setTotalResults(responseData.data.totalCount);
+      } catch (error) {
+        //console.log("error in getCandidates", error);
+      }
     };
-    try {
-      getCandidates();
-    } catch (error) {
-      //console.log("error in getCandidates", error);
-    }
+
+    getCandidates();
   }, [select_sabha]);
 
   // useEffect(() => {
@@ -317,7 +318,7 @@ export default function ConstituencyTable() {
                       {candidate.votesCount}
                     </td>
                     <td className="text-[.8rem] md:text-[16px] px-2 py-2 md:px-5 md:py-6 text-center font-medium border-2 border-[gray]">
-                      {candidate.votePercentage.toFixed(2)}%
+                      {candidate.votePercentage?.toFixed(2)}%
                     </td>
                   </tr>
                 ))
