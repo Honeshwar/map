@@ -49,6 +49,7 @@ export default function ConstituencyDropdown() {
     };
     if (select_state !== "Select State") {
       fetchConstituency();
+      setSearchText("");
     } else {
       setSelect_constituency(
         select_sabha === "Vidhan Sabha"

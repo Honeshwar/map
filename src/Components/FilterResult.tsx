@@ -208,7 +208,7 @@ export default function FilterResult() {
         <h1 className="text-[1rem] md:text-[1.5rem] font-bold text-[#d8ac00] text-center">
           Powered by: Dhruv Research
         </h1>
-        {/* 
+
         {chartLoading ? (
           <Loading />
         ) : error ? (
@@ -250,9 +250,9 @@ export default function FilterResult() {
               // error={error}
             />
           </>
-        )} */}
+        )}
 
-        {/* <ConstituencyTable /> */}
+        <ConstituencyTable />
       </div>
     </section>
   );
