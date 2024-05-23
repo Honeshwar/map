@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import ChartDataLabels from "chartjs-plugin-datalabels";
-import ChartNotation from "chartjs-plugin-annotation";
+// import ChartNotation from "chartjs-plugin-annotation";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,9 +23,9 @@ ChartJS.register(
   BarElement,
   Title,
   Tooltip,
-  Legend,
+  Legend
   // ChartDataLabels
-  ChartNotation
+  // ChartNotation
 );
 
 export default function ColumnBar({
@@ -35,7 +35,7 @@ export default function ColumnBar({
   totalBars,
   years,
   // chartLoading,
-  chartNo,
+  chartNo = 1,
   colors,
   legends,
 }: {

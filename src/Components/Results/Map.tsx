@@ -108,7 +108,7 @@ export default function Map() {
 
   useEffect(() => {
     if (!loading && mapResult !== null) {
-      // console.log("constituency", select_constituency);
+      //  .log("constituency", select_constituency);
       //console.log("stateName", select_state);
       //console.log("geojson: ", PCGeojson, ACGeojson, StateGeojson);
       let layers = [];
@@ -365,7 +365,7 @@ export default function Map() {
           // );
           if (
             select_constituency.acNo !== -1 &&
-            mapResult[d.properties.ST_NAME][d.properties.AC_NO].acNo !==
+            mapResult[d.properties.ST_NAME][d.properties.AC_NO]?.acNo !==
               select_constituency.acNo
           ) {
             obj = null;
@@ -706,7 +706,6 @@ export default function Map() {
             getCursor={(e) => _getCursor(e)}
             mapboxApiAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
             pickingRadius={5}
-            controller={true}
             //   width={
             //     windowWidth < 800
             //       ? windowWidth > 700
@@ -729,9 +728,20 @@ export default function Map() {
             reuseMaps
             preventStyleDiffing={true}
             attributionControl={false}
-            // onWheel={(e: any) => {
-            //   console.log("onWheel", e);
-            // }}
+            // controller={true}
+            controller={
+              windowWidth < 640
+                ? {
+                    doubleClickZoom: true, // Enable double click to zoom
+                    scrollZoom: false,
+                    dragPan: true,
+                    dragRotate: false,
+                    keyboard: false,
+                    touchRotate: false,
+                    touchZoom: false,
+                  }
+                : true
+            }
           >
             <ReactMapGL
               // ref={mapRef}
