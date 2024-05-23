@@ -179,7 +179,7 @@ export default function ConstituencyTable() {
         setTotalResults(responseData.data.totalCount);
         setLoading(false);
       } catch (error) {
-        //console.log("error in getDataFromPageNO", error);
+        console.log("error in getDataFromPageNO", error);
       } finally {
         setCallNextPage(false);
       }

@@ -29,7 +29,7 @@ export default function StateDropdown() {
           }`
         );
         const responseData = await response.json();
-        console.log("response state", responseData);
+        // console.log("response state", responseData);
         setStates(responseData.data);
       } catch (error) {
         console.log("error in fetch states", error);

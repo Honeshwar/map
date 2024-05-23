@@ -108,7 +108,7 @@ export default function Map() {
 
   useEffect(() => {
     if (!loading && mapResult !== null) {
-      console.log("constituency", select_constituency);
+      // console.log("constituency", select_constituency);
       //console.log("stateName", select_state);
       //console.log("geojson: ", PCGeojson, ACGeojson, StateGeojson);
       let layers = [];
@@ -384,7 +384,7 @@ export default function Map() {
 
     // }
 
-    console.log("obj", obj);
+    // console.log("obj", obj);
     let rgba = [];
     if (obj) {
       let party = "",
@@ -450,7 +450,7 @@ export default function Map() {
     // Adjust x to center the tooltip horizontally
     // x -= tooltipWidth / 2 - tooltipWidth;
 
-    console.log("x", x, tooltipWidth, containerRef.current.clientWidth);
+    // console.log("x", x, tooltipWidth, containerRef.current.clientWidth);
     // Adjust for screen boundaries
     if (x + tooltipWidth > containerRef.current.clientWidth) {
       // x = containerRef.current.clientWidth - tooltipWidth - margin;
@@ -729,9 +729,9 @@ export default function Map() {
             reuseMaps
             preventStyleDiffing={true}
             attributionControl={false}
-            onWheel={(e: any) => {
-              console.log("onWheel", e);
-            }}
+            // onWheel={(e: any) => {
+            //   console.log("onWheel", e);
+            // }}
           >
             <ReactMapGL
               // ref={mapRef}

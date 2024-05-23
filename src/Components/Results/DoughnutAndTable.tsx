@@ -89,12 +89,12 @@ export default function DoughnutAndTable() {
         //   doughnutData.party.push(obj.party);
         // }
 
-        console.log(
-          !isInitialData,
-          select_election_year === "Select Election year",
-          index === totalYearCount - 1,
-          !yearSelect
-        );
+        // console.log(
+        //   !isInitialData,
+        //   select_election_year === "Select Election year",
+        //   index === totalYearCount - 1,
+        //   !yearSelect
+        // );
         //dougghnut onluy single year data show
         if (!isInitialData && year == select_election_year) {
           doughnutData.seats.push(Number(obj.seats));
@@ -131,7 +131,7 @@ export default function DoughnutAndTable() {
     const sortedParties = sortPartiesBySeats(tableData.party, tableData.seats);
     tableData.party = sortedParties;
     setTable(tableData);
-    console.log("doughnut data", doughnutData);
+    // console.log("doughnut data", doughnutData);
     setElectionResult(doughnutData);
 
     let ts = 0;
@@ -164,7 +164,7 @@ export default function DoughnutAndTable() {
     // if (select_state !== "Select State") {
     const getElectionResultByState = async () => {
       setLoading(true);
-      console.log("state call");
+      // console.log("state call");
       try {
         let encodedName = encodeURIComponent(select_state);
         const response = await fetch(
@@ -174,7 +174,7 @@ export default function DoughnutAndTable() {
             }${select_state !== "Select State" ? `&state=${encodedName}` : ""}`
         );
         const responseData = await response.json();
-        console.log("response data doughnut and table", responseData.data);
+        // console.log("response data doughnut and table", responseData.data);
         extractData(responseData.data, false);
         setLoading(false);
       } catch (error) {
@@ -194,7 +194,7 @@ export default function DoughnutAndTable() {
         : select_constituency.pcNo !== -1)
     ) {
       const getElectionResultByConstituency = async () => {
-        console.log("assembly call");
+        // console.log("assembly call");
         setLoading(true);
         try {
           // let constitu = "";
@@ -233,7 +233,7 @@ export default function DoughnutAndTable() {
       getElectionResultByConstituency();
     } else if (select_state !== "Select State") {
       const getElectionResultByState = async () => {
-        console.log("assembly/state call");
+        // console.log("assembly/state call");
         setLoading(true);
         try {
           let encodedName = encodeURIComponent(select_state);
@@ -244,7 +244,7 @@ export default function DoughnutAndTable() {
               }&state=${encodedName}`
           );
           const responseData = await response.json();
-          console.log("response data doughnut and table", responseData.data);
+          // console.log("response data doughnut and table", responseData.data);
           extractData(responseData.data, false);
           setLoading(false);
         } catch (error) {

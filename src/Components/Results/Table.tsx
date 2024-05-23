@@ -23,13 +23,13 @@ export default function Table({ data }: any) {
       return aFirst - bFirst;
     });
 
-    console.log("partiesArray: ", partiesArray);
+    // console.log("partiesArray: ", partiesArray);
 
     // Convert the array back to an object
     const sortedParties = Object.fromEntries(partiesArray);
     return sortedParties;
   }
-  console.log("sorted data: ", sortPartiesByFirstElement(data.seats));
+  // console.log("sorted data: ", sortPartiesByFirstElement(data.seats));
   // console.log("table component", data);
   const bgColor = [
     "#b0b2ee",
@@ -72,7 +72,7 @@ export default function Table({ data }: any) {
         newPage * (isMobile ? 5 : 5)
       ), //["BJP", "INC"],
     }); // 5 entries per page
-    console.log("current page: ", newPage);
+    // console.log("current page: ", newPage);
     setCurrentPage(newPage);
   };
   return (

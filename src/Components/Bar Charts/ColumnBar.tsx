@@ -102,7 +102,7 @@ export default function ColumnBar({
   switch (chartNo) {
     case 1:
       for (let i = 0; i < years.length; i++) {
-        console.log(dataValues, new_dataValues[i]);
+        // console.log(dataValues, new_dataValues[i]);
         let d1 = {
           label: first ? legends[0] : legends[1],
           data: new_dataValues[i]["bar1"],

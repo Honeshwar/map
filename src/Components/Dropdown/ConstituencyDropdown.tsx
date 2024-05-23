@@ -28,7 +28,7 @@ export default function ConstituencyDropdown() {
   // const [showDropDown, setShowDropDown] = useState(false);
   const [currStateAllConstituency, setCurrStateAllConstituency] = useState([]);
   const [constituency, setConstituency] = useState([]);
-  //console.log("state at constituency", select_state);
+  ////console.log("state at constituency", select_state);
   useEffect(() => {
     const fetchConstituency = async () => {
       try {
@@ -39,12 +39,12 @@ export default function ConstituencyDropdown() {
           }&limit=100`
         );
         const responseData = await response.json();
-        //console.log("result", responseData);
+        ////console.log("result", responseData);
         // setSelect_constituency(responseData.data);
         setCurrStateAllConstituency(responseData.data);
         setConstituency(responseData.data);
       } catch (error) {
-        //console.log("error in fetch constituency", error);
+        console.log("error in fetch constituency", error);
       }
     };
     if (select_state !== "Select State") {
@@ -85,11 +85,11 @@ export default function ConstituencyDropdown() {
     setSearchText("");
   }, [select_sabha]);
 
-  console.log(
-    "currStateAllConstituency",
-    currStateAllConstituency,
-    constituency
-  );
+  //console.log(
+  //   "currStateAllConstituency",
+  //   currStateAllConstituency,
+  //   constituency
+  // );
   const handleSelectConstituency = (constituency: Constituency<LS | VS>) => {
     resetFilterToInitial(2);
     setSelect_constituency(constituency);
@@ -114,12 +114,12 @@ export default function ConstituencyDropdown() {
   //   }
   // }, [select_constituency]);
   function searchAC(searchText: string = "") {
-    console.log("searchText", searchText, typeof searchText);
+    //console.log("searchText", searchText, typeof searchText);
     if (searchText === "" || currStateAllConstituency.length === 0) {
       setConstituency(currStateAllConstituency);
       return;
     }
-    console.log("currStateAllConstituency", currStateAllConstituency);
+    //console.log("currStateAllConstituency", currStateAllConstituency);
     let newConstituency = [];
 
     if (select_sabha === "Vidhan Sabha") {
@@ -131,7 +131,7 @@ export default function ConstituencyDropdown() {
         return item.pcName.toLowerCase().includes(searchText.toLowerCase());
       });
     }
-    console.log("newConstituency", newConstituency);
+    //console.log("newConstituency", newConstituency);
     setConstituency(newConstituency);
   }
   return (
@@ -144,6 +144,9 @@ export default function ConstituencyDropdown() {
       {showConstituencyDropDown && showSearchInput ? (
         <div className="flex justify-center items-center px-3">
           <input
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
             defaultValue={searchText}
             type="search"
             className="text-sm pb-1"

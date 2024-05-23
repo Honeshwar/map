@@ -96,7 +96,7 @@ const DoughnutChart = ({
       const width = chart.width;
       const height = chart.height;
 
-      console.log("wefsad", width, height);
+      // console.log("wefsad", width, height);
       ctx.restore();
       const fontSize = (height / 130).toFixed(2);
       ctx.font = fontSize + "em sans-serif";
@@ -112,7 +112,7 @@ const DoughnutChart = ({
           : height / 2 + (40 - (position - 1) * 8);
       //[]20,5,- 10;
 
-      console.log(fontSize, textX, textY);
+      // console.log(fontSize, textX, textY);
       ctx.fillText(text, textX, textY);
       ctx.save();
     },
