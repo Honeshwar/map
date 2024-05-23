@@ -261,7 +261,7 @@ export default function DoughnutAndTable() {
       {/* && electionResult?.party?.length > 0 */}
       {!loading ? (
         <>
-          <Doughnut electionResult={electionResult} totalSeats={200} />
+          <Doughnut electionResult={electionResult} totalSeats={totalSeats} />
           <Table data={table} />
         </>
       ) : (

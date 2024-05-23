@@ -89,3 +89,57 @@
 .mapboxgl-ctrl-attrib {
   display: none !important;
 }
+
+/* pollester election section */
+#elction_name .splide__arrow {
+  height: 100% !important;
+  border-radius: 0px !important;
+  width: 3rem;
+  background: #454545;
+  opacity: 1 !important;
+}
+
+#elction_name .splide__arrow--prev {
+  left: 0px;
+  border-radius: 11px 0px 0px 11px !important;
+  color: white !important;
+}
+
+#elction_name .splide__arrow--next {
+  right: 0px;
+  border-radius: 0px 11px 11px 0px !important;
+  color: white !important;
+}
+
+#elction_name .splide__arrow svg {
+  fill: #ffffff;
+}
+
+/*  */
+#elction_name .splide_arrow {
+  height: 100% !important;
+  border-radius: 0px !important;
+  background-color: red !important;
+}
+
+#elction_name .splide__slide {
+  transition: all 0.3s ease;
+  filter: opacity(50%);
+  transform: scale(0.9);
+}
+#elction_name .splide__slide.is-active {
+  filter: opacity(100%) !important;
+}
+
+#elction_name .splide__slide.is-active > .agenda_card {
+  transform: scale(1);
+  filter: opacity(1) !important;
+  border-radius: 4px;
+  background: #fc0;
+  color: #333 !important;
+}
+
+#elction_name .splide__slide.is-active > .agenda_card > .card-title > h4 {
+  color: #333 !important;
+  font-weight: 700;
+}

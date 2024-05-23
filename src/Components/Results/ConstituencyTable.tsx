@@ -383,7 +383,7 @@ export default function ConstituencyTable() {
         <h1 className="text-[.8rem] md:text-[1.5rem] font-[600]">
           {candidates.length > 0 && candidates[0].state}
         </h1>
-        <div className="w-full h-[70vh]  overflow-x-auto md:h-[81.5vh]">
+        <div className="w-full h-[70vh]  overflow-x-auto md:h-[600px]">
           <table className="w-full">
             <thead>
               <tr className="bg-[#fcb715]">
