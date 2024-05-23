@@ -84,3 +84,8 @@
     transform: rotate(360deg);
   }
 }
+
+/* Hide the default attribution text  at bottom right corner of the map */
+.mapboxgl-ctrl-attrib {
+  display: none !important;
+}

@@ -9,6 +9,27 @@ import { useFilterContextValue } from "@/context/FilterContext";
 //   seats: any;
 // }
 export default function Table({ data }: any) {
+  function sortPartiesByFirstElement(parties: any) {
+    // Convert the object into an array of entries (key-value pairs)
+    const partiesArray = Object.entries(parties);
+    // console.log("partiesArray: ", partiesArray);
+    // Sort the array based on the first element of the array values
+    partiesArray.sort((a: any, b: any) => {
+      const aFirst = Array.isArray(a[1]) ? a[1][0] : a[1][0][0];
+      const bFirst = Array.isArray(b[1]) ? b[1][0] : b[1][0][0];
+
+      if (aFirst === undefined) return 1;
+      if (bFirst === undefined) return -1;
+      return aFirst - bFirst;
+    });
+
+    console.log("partiesArray: ", partiesArray);
+
+    // Convert the array back to an object
+    const sortedParties = Object.fromEntries(partiesArray);
+    return sortedParties;
+  }
+  console.log("sorted data: ", sortPartiesByFirstElement(data.seats));
   // console.log("table component", data);
   const bgColor = [
     "#b0b2ee",

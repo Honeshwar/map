@@ -126,7 +126,10 @@ export default function DoughnutAndTable() {
       incrementCount++;
       index++;
     }
+
     // //console.log("table data", tableData);
+    const sortedParties = sortPartiesBySeats(tableData.party, tableData.seats);
+    tableData.party = sortedParties;
     setTable(tableData);
     console.log("doughnut data", doughnutData);
     setElectionResult(doughnutData);
@@ -138,6 +141,25 @@ export default function DoughnutAndTable() {
     setTotalSeats(ts);
   };
 
+  function sortPartiesBySeats(
+    parties: string[],
+    seats: { [key: string]: number[] }
+  ) {
+    // Helper function to get the first seat value or handle undefined cases
+    function getFirstSeatValue(party: string) {
+      if (
+        seats[party] &&
+        Array.isArray(seats[party]) &&
+        seats[party][0] !== undefined
+      ) {
+        return seats[party][0];
+      }
+      return 0; // Default to 0 if undefined or not available
+    }
+
+    // Sort the parties based on the first seat value
+    return parties.sort((a, b) => getFirstSeatValue(b) - getFirstSeatValue(a));
+  }
   useEffect(() => {
     // if (select_state !== "Select State") {
     const getElectionResultByState = async () => {

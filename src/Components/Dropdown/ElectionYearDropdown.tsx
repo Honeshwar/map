@@ -41,8 +41,32 @@ export default function ElectionYearDropdown() {
     setCompareYears([]);
     setCurrentSelectedYear("Select Election year");
     // }
-  }, [select_sabha, select_state, select_constituency]);
+  }, [select_sabha]); //select_state, select_constituency
 
+  useEffect(() => {
+    const fetchYears = async () => {
+      try {
+        let urlEncodeStateName = encodeURIComponent(select_state);
+        const response = await fetch(
+          `https://dhruvresearch.com/api/v2/result/year?state=${urlEncodeStateName}&election_type=${
+            select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+          }`
+        );
+        const responseData = await response.json();
+        // console.log("result", responseData);
+        setYears(responseData.data);
+      } catch (error) {
+        console.log("error in fetch years", error);
+      }
+    };
+    if (select_state !== "Select State") {
+      fetchYears();
+    } else {
+      setYears([]);
+      setCompareYears([]);
+      setCurrentSelectedYear("Select Election year");
+    }
+  }, [select_state]);
   useEffect(() => {
     const fetchYears = async () => {
       try {
@@ -101,7 +125,8 @@ export default function ElectionYearDropdown() {
       </legend>
       <div
         className="w-[95%] px-2 text-gray-700 relative flex items-center"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           //reconcilation and batching
           setShowElectionYearDropDown((prev: boolean) => !prev);
           setShowStateDropDown(false);
@@ -136,7 +161,12 @@ export default function ElectionYearDropdown() {
 
       {/* <!-- drop down --> */}
       {showElectionYearDropDown && (
-        <div className="absolute z-[1] w-[200px] bg-white border-2 border-[#767575] rounded-lg   top-10 ">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="absolute z-[1] w-[200px] bg-white border-2 border-[#767575] rounded-lg   top-10 "
+        >
           <ul
             id="dropdown-scroll"
             className="h-[200px] overflow-y-auto text-sm"
@@ -151,7 +181,10 @@ export default function ElectionYearDropdown() {
                     currentSelectedYear !== "Select Election year",
                 }
               )}
-              onClick={() => setCurrentSelectedYear("Select Election year")}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentSelectedYear("Select Election year");
+              }}
             >
               Select Election year
             </li>
@@ -165,7 +198,10 @@ export default function ElectionYearDropdown() {
                     "bg-white text-[gray]": currentSelectedYear !== year,
                   }
                 )}
-                onClick={() => handleSelectElectionYear(year)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectElectionYear(year);
+                }}
               >
                 {year}
               </li>
@@ -178,11 +214,11 @@ export default function ElectionYearDropdown() {
             <div className="pb-1 flex items-center gap-2 text-sm">
               Compare to
               <div
-                onClick={
-                  currentSelectedYear === "Select Election year"
-                    ? undefined
-                    : () => setShowCompareDropDown((prev) => !prev)
-                }
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (currentSelectedYear !== "Select Election year")
+                    setShowCompareDropDown((prev) => !prev);
+                }}
                 className="border-2 py-1 pl-2 pr-1 text-black font-[500] rounded-md flex gap-1 items-center"
               >
                 {/* <span>2018</span> */}
@@ -223,7 +259,8 @@ export default function ElectionYearDropdown() {
             </div>
             <div className="flex justify-end gap-5 pt-2 pb-3 text-sm">
               <button
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   // if (
                   //   select_state !== "Select State" &&
                   //   (select_sabha === "Lok Sabha"
@@ -243,7 +280,8 @@ export default function ElectionYearDropdown() {
               </button>
               <button
                 className="text-black font-[500]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   if (
                     select_state !== "Select State" &&
                     (select_sabha === "Lok Sabha"
@@ -270,7 +308,10 @@ export default function ElectionYearDropdown() {
                     currentSelectedYear !== year && (
                       <li
                         key={"compare-" + index}
-                        onClick={() => handleSelectCompareYear(year)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectCompareYear(year);
+                        }}
                         className={clsx(
                           " pt-2 hover:text-[yellow] hover:font-bold  flex gap-3 items-center text-sm font-semibold",
                           {

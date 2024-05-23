@@ -32,31 +32,83 @@ export default function ConstituencyTable() {
     select_state,
     select_constituency,
     select_election_year,
+    select_compare_year,
     constituencyFilterData,
   } = useFilterContextValue();
 
   const [filter, setFilter] = useState<string>("candidate"); //candidate or party
   // const [filterCall, setFilterCall] = useState(false); //candidate or party
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
-    if (JSON.stringify(constituencyFilterData) !== "{}") {
-      setCurrentData(sortTable(constituencyFilterData.data, filter));
-      setTotalPages(Math.ceil(constituencyFilterData.totalCount / 7));
-      // setTotalPages(constituencyFilterData.previousPage); //totalCOunt/limit
-      setTotalResults(constituencyFilterData.totalCount);
-      setCurrentPage(1);
-    }
-  }, [constituencyFilterData]);
+  // useEffect(() => {
+  //   if (JSON.stringify(constituencyFilterData) !== "{}") {
+  //     setCurrentData(sortTable(constituencyFilterData.data, filter));
+  //     setTotalPages(Math.ceil(constituencyFilterData.totalCount / 7));
+  //     // setTotalPages(constituencyFilterData.previousPage); //totalCOunt/limit
+  //     setTotalResults(constituencyFilterData.totalCount);
+  //     setCurrentPage(1);
+  //   }
+  // }, [constituencyFilterData]);
+
+  // useEffect(() => {
+  //   const getCandidates = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         process.env.NEXT_PUBLIC_API_URL +
+  //           `/result/candidates?election_type=${
+  //             select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //           }&limit=7`
+  //       );
+  //       const responseData = await response.json();
+  //       //console.log("resopnse ", responseData, responseData.data);
+
+  //       setCurrentData(sortTable(responseData.data.data, filter));
+  //       setTotalPages(Math.ceil(responseData.data.totalCount / 7));
+  //       // setTotalPages(responseData.data.previousPage); //totalCOunt/limit
+  //       setTotalResults(responseData.data.totalCount);
+  //     } catch (error) {
+  //       //console.log("error in getCandidates", error);
+  //     }
+  //   };
+
+  //   getCandidates();
+  // }, [select_sabha]);
+
+  // useEffect(() => {
+  //   const getCandidates = async (url: string) => {
+  //     try {
+  //       const response = await fetch(url);
+  //       const responseData = await response.json();
+  //       //console.log("resopnse ", responseData, responseData.data);
+
+  //       setCurrentData(sortTable(responseData.data.data, filter));
+  //       setTotalPages(Math.ceil(responseData.data.totalCount / 7));
+  //       // setTotalPages(responseData.data.previousPage); //totalCOunt/limit
+  //       setTotalResults(responseData.data.totalCount);
+  //     } catch (error) {
+  //       //console.log("error in getCandidates", error);
+  //     }
+  //   };
+  //   if (select_state !== "Select State") {
+  //     const url =
+  //       process.env.NEXT_PUBLIC_API_URL +
+  //       `/result/candidates?election_type=${
+  //         select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //       }&limit=7&state=${encodeURIComponent(select_state)}`;
+  //     getCandidates(url);
+  //   } else {
+  //     const url =
+  //       process.env.NEXT_PUBLIC_API_URL +
+  //       `/result/candidates?election_type=${
+  //         select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //       }&limit=7`;
+  //     getCandidates(url);
+  //   }
+  // }, [select_state]);
 
   useEffect(() => {
-    const getCandidates = async () => {
+    const getCandidates = async (url: string) => {
       try {
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL +
-            `/result/candidates?election_type=${
-              select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-            }&limit=7`
-        );
+        const response = await fetch(url);
         const responseData = await response.json();
         //console.log("resopnse ", responseData, responseData.data);
 
@@ -64,13 +116,49 @@ export default function ConstituencyTable() {
         setTotalPages(Math.ceil(responseData.data.totalCount / 7));
         // setTotalPages(responseData.data.previousPage); //totalCOunt/limit
         setTotalResults(responseData.data.totalCount);
+        setCurrentPage(1);
       } catch (error) {
         //console.log("error in getCandidates", error);
       }
     };
+    // if (select_state !== "Select State") {
+    const electionTypeParam =
+      select_sabha === "Vidhan Sabha" ? "election_type=VS" : "election_type=LS";
+    const stateParam =
+      select_state !== "Select State"
+        ? `&state=${encodeURIComponent(select_state)}`
+        : "";
+    const constituencyParam =
+      select_sabha === "Vidhan Sabha"
+        ? select_constituency.acNo !== -1
+          ? `&constituency=${select_constituency.acNo}`
+          : ""
+        : select_constituency.pcNo !== -1
+        ? `&constituency=${select_constituency.pcNo}`
+        : "";
+    const yearsParams =
+      select_election_year !== "Select Election year"
+        ? `&years=${select_election_year}`
+        : "";
 
-    getCandidates();
-  }, [select_sabha]);
+    const url =
+      process.env.NEXT_PUBLIC_API_URL +
+      "/result/candidates/filter?" +
+      electionTypeParam +
+      stateParam +
+      constituencyParam +
+      yearsParams +
+      `&limit=7`;
+    getCandidates(url);
+    //else {
+    //   const url =
+    //     process.env.NEXT_PUBLIC_API_URL +
+    //     `/result/candidates?election_type=${
+    //       select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+    //     }&limit=7`;
+    //   getCandidates(url);
+    // }
+  }, [select_sabha, select_state, select_constituency, select_election_year]);
 
   // useEffect(() => {
   //   if (JSON.stringify(candidates) !== "[]") {
@@ -98,33 +186,62 @@ export default function ConstituencyTable() {
     };
 
     //defeault data
-    if (callNextPage && JSON.stringify(constituencyFilterData) === "{}") {
+    // if (callNextPage && JSON.stringify(constituencyFilterData) === "{}") {
+    //   const url =
+    //     process.env.NEXT_PUBLIC_API_URL +
+    //     `/result/candidates?election_type=${
+    //       select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+    //     }&limit=7&page=` +
+    //     currentPage;
+    //   setLoading(true);
+    //   getDataFromPageNO(url);
+    // } else
+    if (callNextPage) {
+      // const url =
+      //   process.env.NEXT_PUBLIC_API_URL +
+      //   `/result/candidates/filter?election_type=${
+      //     select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+      //   }&limit=7&page=` +
+      //   currentPage +
+      //   "&state=" +
+      //   select_state +
+      //   "&constituency=" +
+      //   (select_sabha === "Vidhan Sabha"
+      //     ? select_constituency.acNo
+      //     : select_constituency.pcNo) +
+      //   "&year=" +
+      //   select_election_year;
+
+      const electionTypeParam =
+        select_sabha === "Vidhan Sabha"
+          ? "election_type=VS"
+          : "election_type=LS";
+      const stateParam =
+        select_state !== "Select State"
+          ? `&state=${encodeURIComponent(select_state)}`
+          : "";
+      const constituencyParam =
+        select_sabha === "Vidhan Sabha"
+          ? select_constituency.acNo !== -1
+            ? `&constituency=${select_constituency.acNo}`
+            : ""
+          : select_constituency.pcNo !== -1
+          ? `&constituency=${select_constituency.pcNo}`
+          : "";
+      const yearsParams =
+        select_election_year !== "Select Election year"
+          ? `&years=${select_election_year}`
+          : "";
+
       const url =
         process.env.NEXT_PUBLIC_API_URL +
-        `/result/candidates?election_type=${
-          select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-        }&limit=7&page=` +
+        "/result/candidates/filter?" +
+        electionTypeParam +
+        stateParam +
+        constituencyParam +
+        yearsParams +
+        `&limit=7&page=` +
         currentPage;
-      setLoading(true);
-      getDataFromPageNO(url);
-    } else if (
-      callNextPage &&
-      JSON.stringify(constituencyFilterData) !== "{}"
-    ) {
-      const url =
-        process.env.NEXT_PUBLIC_API_URL +
-        `/result/candidates/filter?election_type=${
-          select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-        }&limit=7&page=` +
-        currentPage +
-        "&state=" +
-        select_state +
-        "&constituency=" +
-        (select_sabha === "Vidhan Sabha"
-          ? select_constituency.acNo
-          : select_constituency.pcNo) +
-        "&year=" +
-        select_election_year;
       setLoading(true);
       getDataFromPageNO(url);
     }

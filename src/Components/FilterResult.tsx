@@ -119,28 +119,13 @@ export default function FilterResult() {
     getChartsData();
   }, [select_sabha]);
   useEffect(() => {
-    async function getChartsData() {
+    async function getChartsData(url: string) {
       try {
         setError(false);
 
         setChartLoading(true);
-        const yearString =
-          select_election_year !== "Select Election year"
-            ? `&years=${JSON.stringify([
-                select_election_year,
-                ...select_compare_year,
-              ])}`
-            : "";
         //for charts filter data
-        const chartResponse = await fetch(
-          `https://dhruvresearch.com/api/v2/result/demographics/filter?election_type=${
-            select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-          }&state=${select_state}&constituency=${
-            select_sabha === "Vidhan Sabha"
-              ? select_constituency.acNo
-              : select_constituency.pcNo
-          }${yearString}`
-        );
+        const chartResponse = await fetch(url);
         const chartResponseData = await chartResponse.json();
         if (
           JSON.stringify(chartResponseData.data[select_election_year]) ===
@@ -179,15 +164,45 @@ export default function FilterResult() {
         setChartLoading(false);
       }
     }
-    if (
-      select_state !== "Select State" &&
-      (select_sabha === "Vidhan Sabha"
+    // if (
+    //   select_state !== "Select State" &&
+    //   (select_sabha === "Vidhan Sabha"
+    //     ? select_constituency.acNo !== -1
+    //     : select_constituency.pcNo !== -1)
+    //   //   &&
+    //   // select_election_year !== "Select Election year"
+    // )
+
+    const electionTypeParam =
+      select_sabha === "Vidhan Sabha" ? "election_type=VS" : "election_type=LS";
+    const stateParam =
+      select_state !== "Select State"
+        ? `&state=${encodeURIComponent(select_state)}`
+        : "";
+    const constituencyParam =
+      select_sabha === "Vidhan Sabha"
         ? select_constituency.acNo !== -1
-        : select_constituency.pcNo !== -1)
-      //   &&
-      // select_election_year !== "Select Election year"
-    )
-      getChartsData();
+          ? `&constituency=${select_constituency.acNo}`
+          : ""
+        : select_constituency.pcNo !== -1
+        ? `&constituency=${select_constituency.pcNo}`
+        : "";
+    const yearsParams =
+      select_election_year !== "Select Election year"
+        ? `&years=${JSON.stringify([
+            select_election_year,
+            ...select_compare_year,
+          ])}`
+        : "";
+
+    const url =
+      process.env.NEXT_PUBLIC_API_URL +
+      "/result/demographics/filter?" +
+      electionTypeParam +
+      stateParam +
+      constituencyParam +
+      yearsParams;
+    getChartsData(url);
   }, [
     select_state,
     select_constituency,
@@ -197,10 +212,11 @@ export default function FilterResult() {
   return (
     <section>
       {/* doughnut, table and map  */}
-      <div className="w-full bg-[#f2cbd1] border-t-2 border-b-2 border-yellow-400 flex justify-start md:justify-between flex-wrap">
+      <div className="w-full bg-[#f2cbd1] border-t-2 border-b-2 border-yellow-400 flex justify-start md:justify-between flex-wrap ">
         <DoughnutAndTable />
 
-        {loading ? <Loading /> : <LazyMap />}
+        {/* {loading ? <Loading /> : <LazyMap />} */}
+        <LazyMap />
       </div>
 
       {/* result bar chart and Table */}

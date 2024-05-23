@@ -18,7 +18,7 @@ const StateGeojsonContext = createContext();
 
 //provide context
 function FilterContextProvider({ children }: { children: React.ReactNode }) {
-  const [select_sabha, setSelect_sabha] = useState("Vidhan Sabha"); //or Lok Sabha/Vidhan Sabha
+  const [select_sabha, setSelect_sabha] = useState("Lok Sabha"); //or Lok Sabha/Vidhan Sabha
   const [select_state, setSelect_state] = useState("Select State");
   const [select_constituency, setSelect_constituency] = useState(
     select_sabha === "Vidhan Sabha"
@@ -61,89 +61,89 @@ function FilterContextProvider({ children }: { children: React.ReactNode }) {
   // select_state === "Jammu & Kashmir"
   // ? "Jammu %26 Kashmir"
   // :
-  useEffect(() => {
-    if (
-      select_state !== "Select State" &&
-      (select_sabha === "Vidhan Sabha"
-        ? select_constituency.acNo !== -1
-        : select_constituency.pcNo !== -1) &&
-      select_election_year !== "Select Election year"
-    ) {
-      //call api
-      const getFilterResult = async () => {
-        try {
-          var encodedName = encodeURIComponent(select_state);
-          const response = await fetch(
-            `${
-              process.env.NEXT_PUBLIC_API_URL
-            }/result/election-result/filter?election_type=${
-              select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-            }&state=${encodedName}&constituency=${
-              select_sabha === "Vidhan Sabha"
-                ? select_constituency.acNo
-                : select_constituency.pcNo
-            }&years=${JSON.stringify([
-              select_election_year,
-              ...select_compare_year,
-            ])}`
-          );
-          const responseData = await response.json();
-          //console.log("filter result", responseData);
-          setFilterData(responseData.data);
-          setMapFilteredData({
-            select_state,
-            select_constituency,
-          });
+  // useEffect(() => {
+  //   if (
+  //     select_state !== "Select State" &&
+  //     (select_sabha === "Vidhan Sabha"
+  //       ? select_constituency.acNo !== -1
+  //       : select_constituency.pcNo !== -1) &&
+  //     select_election_year !== "Select Election year"
+  //   ) {
+  //     //call api
+  //     const getFilterResult = async () => {
+  //       try {
+  //         var encodedName = encodeURIComponent(select_state);
+  //         const response = await fetch(
+  //           `${
+  //             process.env.NEXT_PUBLIC_API_URL
+  //           }/result/election-result/filter?election_type=${
+  //             select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //           }&state=${encodedName}&constituency=${
+  //             select_sabha === "Vidhan Sabha"
+  //               ? select_constituency.acNo
+  //               : select_constituency.pcNo
+  //           }&years=${JSON.stringify([
+  //             select_election_year,
+  //             ...select_compare_year,
+  //           ])}`
+  //         );
+  //         const responseData = await response.json();
+  //         //console.log("filter result", responseData);
+  //         setFilterData(responseData.data);
+  //         setMapFilteredData({
+  //           select_state,
+  //           select_constituency,
+  //         });
 
-          //fiter data of contituency table
-          const res2 = await fetch(
-            process.env.NEXT_PUBLIC_API_URL +
-              `/result/candidates/filter?election_type=${
-                select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-              }&limit=7&page=` +
-              1 +
-              "&state=" +
-              encodedName +
-              "&constituency=" +
-              (select_sabha === "Vidhan Sabha"
-                ? select_constituency.acNo
-                : select_constituency.pcNo) +
-              "&year=" +
-              select_election_year
-          );
+  //         //fiter data of contituency table
+  //         const res2 = await fetch(
+  //           process.env.NEXT_PUBLIC_API_URL +
+  //             `/result/candidates/filter?election_type=${
+  //               select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //             }&limit=7&page=` +
+  //             1 +
+  //             "&state=" +
+  //             encodedName +
+  //             "&constituency=" +
+  //             (select_sabha === "Vidhan Sabha"
+  //               ? select_constituency.acNo
+  //               : select_constituency.pcNo) +
+  //             "&year=" +
+  //             select_election_year
+  //         );
 
-          const res2Data = await res2.json();
-          setConstituencyFilterData(res2Data.data);
+  //         const res2Data = await res2.json();
+  //         setConstituencyFilterData(res2Data.data);
 
-          // //for charts filter data
-          // const chartResponse = await fetch(
-          //   `https://dhruvresearch.com/api/v2/result/demographics/filter?election_type=${
-          //     select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-          //   }&state=${select_state}&constituency=${
-          //     select_sabha === "Vidhan Sabha"
-          //       ? select_constituency.acNo
-          //       : select_constituency.pcNo
-          //   }&years=${JSON.stringify([
-          //     select_election_year,
-          //     ...select_compare_year,
-          //   ])}`
-          // );
-          // const chartResponseData = await chartResponse.json();
+  //         // //for charts filter data
+  //         // const chartResponse = await fetch(
+  //         //   `https://dhruvresearch.com/api/v2/result/demographics/filter?election_type=${
+  //         //     select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //         //   }&state=${select_state}&constituency=${
+  //         //     select_sabha === "Vidhan Sabha"
+  //         //       ? select_constituency.acNo
+  //         //       : select_constituency.pcNo
+  //         //   }&years=${JSON.stringify([
+  //         //     select_election_year,
+  //         //     ...select_compare_year,
+  //         //   ])}`
+  //         // );
+  //         // const chartResponseData = await chartResponse.json();
 
-          // setChartsFilterData(chartResponseData.data);
-        } catch (error) {
-          //console.log(error);
-        }
-      };
-      getFilterResult();
-    }
-  }, [
-    select_sabha,
-    select_state,
-    select_constituency,
-    select_election_year,
-    select_compare_year,
-  ]);
+  //         // setChartsFilterData(chartResponseData.data);
+  //       } catch (error) {
+  //         //console.log(error);
+  //       }
+  //     };
+  //     getFilterResult();
+  //   }
+  // }, [
+  //   select_sabha,
+  //   select_state,
+  //   select_constituency,
+  //   select_election_year,
+  //   select_compare_year,
+  // ]);
   // useEffect(() => {
   //   //call api
   //   const getFilterResult = async () => {
@@ -264,7 +264,15 @@ function FilterContextProvider({ children }: { children: React.ReactNode }) {
       //console.log("reset filter error");
     }
   };
-
+  useEffect(() => {
+    if (window) {
+      window.onclick = () => {
+        setShowStateDropDown(false);
+        setShowConstituencyDropDown(false);
+        setShowElectionYearDropDown(false);
+      };
+    }
+  }, []);
   useEffect(() => {
     Promise.all([
       fetch(`data/geojson/states.geojson`),

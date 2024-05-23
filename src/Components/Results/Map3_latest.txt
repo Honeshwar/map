@@ -48,13 +48,14 @@ export default function Map() {
 
   useEffect(() => {
     // if (select_sabha === "Lok Sabha") {
+
     // } else {
     //   if (loading === false) {
     //     //console.log("state at toggle sabha", Object.keys(mapResult), mapResult);
     //     setSelect_state(Object.keys(mapResult)[0]);
     //   }
     // }
-    // setLayers([]);
+    setLayers([]);
   }, [select_sabha]);
 
   useEffect(() => {
@@ -102,13 +103,12 @@ export default function Map() {
       });
 
       // setStateName(select_state);
-      // setLayers([]);
+      setLayers([]);
     }
   }, [select_constituency]);
 
   useEffect(() => {
-    if (!loading && mapResult !== null) {
-      console.log("constituency", select_constituency);
+    if (layers.length === 0) {
       //console.log("stateName", select_state);
       //console.log("geojson: ", PCGeojson, ACGeojson, StateGeojson);
       let layers = [];
@@ -134,16 +134,6 @@ export default function Map() {
             //   select_state === "Select State"
             //     ? ({ object }) => _handleMap(object)
             //     : null,
-
-            updateTriggers: {
-              getFillColor: [mapResult, select_constituency], // Trigger update when filter changes
-            },
-            // transitions: {
-            //   getFillColor: {
-            //     duration: 5000,
-            //     easing: (t: any) => t,
-            //   },
-            // },
           }),
           new GeoJsonLayer({
             id: "state-geojson-layer-2", //@ts-ignore
@@ -151,10 +141,7 @@ export default function Map() {
             stroked: true,
             filled: false,
             lineWidthScale: 600, //@ts-ignore
-            getLineColor:
-              select_sabha === "Vidhan Sabha"
-                ? TRANSPARENT_COLOR
-                : DEFAULT_STATE_LINE_COLOR, //@ts-ignore
+            getLineColor: DEFAULT_STATE_LINE_COLOR, //@ts-ignore
             getFillColor: TRANSPARENT_COLOR,
             getLineWidth: 4,
           }),
@@ -170,22 +157,17 @@ export default function Map() {
             lineWidthScale: 200,
             //@ts-ignore
             getFillColor: (d) => _fillGeoJsonColor(d), //@ts-ignore
-            getLineColor: (d) => fillDefaultLineColor(d), //DEFAULT_DISTRICT_LINE_COLOR_GENERAL, //@ts-ignore
+            getLineColor: DEFAULT_DISTRICT_LINE_COLOR_GENERAL, //@ts-ignore
             getLineWidth: 2, //@ts-ignore
             //@ts-ignore
             onClick:
               select_constituency.acNo === -1
                 ? ({ object }: any) => _handleMap(object)
                 : null,
-            updateTriggers: {
-              getFillColor: [mapResult, select_constituency], // Trigger update when filter changes
-            },
-            // transitions: {
-            //   getFillColor: {
-            //     duration: 5000,
-            //     easing: (t: any) => t,
-            //   },
-            // },
+            // onClick:
+            //   select_state === "Select State"
+            //     ? ({ object }) => _handleMap(object)
+            //     : null,
           }),
           new GeoJsonLayer({
             id: "state-geojson-layer-2", //@ts-ignore
@@ -201,25 +183,13 @@ export default function Map() {
       }
 
       //console.log("layers", layers);
-
-      if (tooltipRef.current) {
-        tooltipRef.current.style.display = "none";
-        tooltipRef.current.innerHTML = "";
-      }
       //@ts-ignore
       setLayers(layers);
     }
-  }, [PCGeojson, ACGeojson, StateGeojson, mapResult, select_constituency]); //don't have api to get select_constituency map data that why we put select_constituency here
+  }, [PCGeojson, ACGeojson, StateGeojson, layers, select_state]);
 
   //console.log(process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN);
-  function fillDefaultLineColor(d: any) {
-    // console.log(d.properties.ST_NAME.toUpperCase(), select_state.toUpperCase());
-    if (d.properties.ST_NAME.toUpperCase() === select_state.toUpperCase()) {
-      return "#000";
-    } else {
-      return "lightgray";
-    }
-  }
+
   function _handleMap(object: any) {
     //console.log("onclick called", object);
     const stateName = object.properties.ST_NAME;
@@ -384,7 +354,7 @@ export default function Map() {
 
     // }
 
-    console.log("obj", obj);
+    //console.log("obj", obj);
     let rgba = [];
     if (obj) {
       let party = "",
@@ -431,10 +401,7 @@ export default function Map() {
   };
 
   const _getTooltip = ({ object, x, y }: any) => {
-    if (tooltipRef.current) {
-      tooltipRef.current.style.display = "none";
-      tooltipRef.current.innerHTML = "";
-    }
+    const reactMapContainer = document.getElementById("react-map");
 
     const tooltip = tooltipRef.current;
     if (!object && !tooltip) {
@@ -443,14 +410,14 @@ export default function Map() {
     }
 
     // Set tooltip position
-    let tooltipWidth = 350; //tooltip.offsetWidth;
-    let tooltipHeight = 300; //tooltip.offsetHeight; //300;
-    const margin = 10;
+    let tooltipWidth = tooltip.offsetWidth;
+    let tooltipHeight = 300;
+    tooltip.offsetHeight;
+    const margin = 30;
 
     // Adjust x to center the tooltip horizontally
     // x -= tooltipWidth / 2 - tooltipWidth;
 
-    console.log("x", x, tooltipWidth, containerRef.current.clientWidth);
     // Adjust for screen boundaries
     if (x + tooltipWidth > containerRef.current.clientWidth) {
       // x = containerRef.current.clientWidth - tooltipWidth - margin;
@@ -516,16 +483,16 @@ export default function Map() {
               <span class="font-[600]">${results.state}</span>
             </p>
             <div class="flex flex-col gap-1 text-[gray] pb-3 pt-2 px-4">
-              <p class="flex text-[13px] ">
-                <span class="flex justify-between min-w-[100px] max-w-[100px]">Constituency  <span class="pr-2 ">:</span></span>
+              <p class="flex justify-between text-[13px]">
+                <span class="flex-1">Constituency</span>
                 <span class="text-black flex-1 font-[600]">
-                  ${results.pcName}
+                  <span class="pr-2 ">:</span> ${results.pcName}
                 </span>
               </p>
-              <p class="flex   text-[13px]">
-                <span class="flex justify-between min-w-[100px] max-w-[100px]">Winner <span class="pr-2">:</span></span>
+              <p class="flex justify-between text-[13px]">
+                <span class="flex-1">Winner</span>
                 <span class="text-black  font-[600]">
-                   ${results.winner}
+                  <span class="pr-2">:</span> ${results.winner}
                 </span>
               </p>
             </div>
@@ -540,7 +507,6 @@ export default function Map() {
               `;
           // Set tooltip position
           tooltip.style.left = `${x}px`;
-          // tooltip.style.right = `${-10}px`;
           tooltip.style.top = `${y}px`;
           tooltip.style.display = "block"; // Show the tooltip
 
@@ -592,16 +558,16 @@ export default function Map() {
               <span class="font-[600]">${results.state}</span>
             </p>
             <div class="flex flex-col gap-1 text-[gray] pb-3 pt-2 px-4">
-              <p class="flex   text-[13px]">
-                <span class="flex justify-between min-w-[100px] max-w-[100px]">Constituency  <span class="pr-2 ">:</span></span>
+              <p class="flex justify-between text-[13px]">
+                <span class="flex-1">Constituency</span>
                 <span class="text-black flex-1 font-[600]">
-                  ${results.acName}
+                  <span class="pr-2 ">:</span> ${results.acName}
                 </span>
               </p>
-              <p class="flex   text-[13px]">
-                <span class="flex justify-between min-w-[100px] max-w-[100px]">Winner <span class="pr-2">:</span></span>
+              <p class="flex justify-between text-[13px]">
+                <span class="flex-1">Winner</span>
                 <span class="text-black  font-[600]">
-                   ${results.winner}
+                  <span class="pr-2">:</span> ${results.winner}
                 </span>
               </p>
             </div>
@@ -697,7 +663,7 @@ export default function Map() {
       {layers.length > 0 ? (
         <div
           ref={containerRef}
-          className="w-full  h-[80vh] md:h-auto md:w-1/2 min-w-[300px] flex-1 z-0 flex justify-end relative  "
+          className="w-full  h-[80vh] md:h-auto md:w-1/2 min-w-[300px] flex-1 z-0 flex justify-end relative"
         >
           <DeckGL
             initialViewState={viewport}
@@ -744,7 +710,7 @@ export default function Map() {
               // }
               mapStyle="mapbox://styles/mapbox/light-v9"
               mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
-              reuseMaps
+              // reuseMaps
               // preventStyleDiffing={true}
               // attributionControl={false}
             ></ReactMapGL>
@@ -758,7 +724,7 @@ export default function Map() {
                   <img
                     src={`/dhruv_logo.jpg`}
                     alt="copyright newsclick dot in"
-                    className="w-28"
+                    className="m-1 w-24"
                   />
                 </div>
               </div>
@@ -846,7 +812,7 @@ export default function Map() {
           {/* tooltip */}
           <div
             ref={tooltipRef}
-            className="absolute z-[1000]  text-black w-full h-full "
+            className="absolute z-[1000]  text-black px-2 py-1"
           ></div>
         </div>
       ) : (

@@ -62,7 +62,9 @@ export default function ConstituencyDropdown() {
               pcName: "Select PC",
             }
       );
+      setCurrStateAllConstituency([]);
       setConstituency([]);
+      setSearchText("");
     }
   }, [select_state]);
 
@@ -78,8 +80,16 @@ export default function ConstituencyDropdown() {
             pcName: "Select PC",
           }
     );
+    setCurrStateAllConstituency([]);
+    setConstituency([]);
+    setSearchText("");
   }, [select_sabha]);
 
+  console.log(
+    "currStateAllConstituency",
+    currStateAllConstituency,
+    constituency
+  );
   const handleSelectConstituency = (constituency: Constituency<LS | VS>) => {
     resetFilterToInitial(2);
     setSelect_constituency(constituency);
@@ -95,28 +105,32 @@ export default function ConstituencyDropdown() {
       : ""
   );
   const dbn = debouncing(searchAC, 350);
-  useEffect(() => {
-    dbn(searchText);
-  }, [searchText]);
-  useEffect(() => {
-    if (select_sabha === "Vidhan Sabha" && select_constituency.acNo !== -1) {
-      setSearchText(select_constituency.acName);
-    }
-  }, [select_constituency]);
+  // useEffect(() => {
+  //   dbn(searchText);
+  // }, [searchText]);
+  // useEffect(() => {
+  //   if (select_sabha === "Vidhan Sabha" && select_constituency.acNo !== -1) {
+  //     setSearchText(select_constituency.acName);
+  //   }
+  // }, [select_constituency]);
   function searchAC(searchText: string = "") {
     console.log("searchText", searchText, typeof searchText);
-    if (searchText === "") {
+    if (searchText === "" || currStateAllConstituency.length === 0) {
       setConstituency(currStateAllConstituency);
       return;
     }
     console.log("currStateAllConstituency", currStateAllConstituency);
-    const newConstituency = currStateAllConstituency.filter((item: VS) => {
-      // console.log(
-      //   "item",
-      //   item.acName.toLowerCase().includes(searchText.toLowerCase())
-      // );
-      return item.acName.toLowerCase().includes(searchText.toLowerCase());
-    });
+    let newConstituency = [];
+
+    if (select_sabha === "Vidhan Sabha") {
+      newConstituency = currStateAllConstituency.filter((item: VS) => {
+        return item.acName.toLowerCase().includes(searchText.toLowerCase());
+      });
+    } else {
+      newConstituency = currStateAllConstituency.filter((item: LS) => {
+        return item.pcName.toLowerCase().includes(searchText.toLowerCase());
+      });
+    }
     console.log("newConstituency", newConstituency);
     setConstituency(newConstituency);
   }
@@ -127,26 +141,27 @@ export default function ConstituencyDropdown() {
         <span className="text-[red]">*</span>
       </legend>
 
-      {showConstituencyDropDown &&
-      showSearchInput &&
-      select_sabha === "Vidhan Sabha" ? (
+      {showConstituencyDropDown && showSearchInput ? (
         <div className="flex justify-center items-center px-3">
           <input
             defaultValue={searchText}
             type="search"
             className="text-sm pb-1"
             style={{ outline: "none", borderBottom: "2px solid gray" }}
-            placeholder="Search AC"
+            placeholder={
+              select_sabha === "Vidhan Sabha" ? "Search AC" : "Search PC"
+            }
             onInput={(e: any) => {
               setSearchText(e.target.value);
-              // dbn(e.target.value);
+              dbn(e.target.value);
             }}
           />
         </div>
       ) : (
         <div
-          className="w-[95%] px-2 text-gray-700 relative flex items-center"
-          onClick={() => {
+          className="w-[95%] px-2 text-gray-700 relative flex items-center cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
             //reconcilation and batching
             setShowElectionYearDropDown(false);
             setShowStateDropDown(false);
@@ -188,7 +203,12 @@ export default function ConstituencyDropdown() {
 
       {/* <!-- drop down --> */}
       {showConstituencyDropDown && (
-        <div className="absolute z-[1] w-[200px] bg-white border-2 border-[#767575] rounded-lg  pb-[2px] top-10 ">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="absolute z-[1] w-[200px] bg-white border-2 border-[#767575] rounded-lg  pb-[2px] top-10 "
+        >
           <ul
             id="dropdown-scroll"
             className="h-[200px] overflow-y-auto text-sm"

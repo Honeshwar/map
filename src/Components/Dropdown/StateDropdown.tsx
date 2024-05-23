@@ -51,7 +51,8 @@ export default function StateDropdown() {
       </legend>
       <div
         className="w-[95%] px-2 text-gray-700 relative flex items-center"
-        onClick={() => {
+        onClick={(e) => {
+          e.stopPropagation();
           setShowConstituencyDropDown(false); //reconcilation and batching
           setShowElectionYearDropDown(false);
           setShowStateDropDown((prev: boolean) => !prev);
@@ -87,7 +88,12 @@ export default function StateDropdown() {
 
       {/* <!-- drop down --> */}
       {showStateDropDown && (
-        <div className="absolute z-[1] w-[200px] h-fit bg-white border-2 border-[#767575] rounded-lg  pb-[2px] top-10 ">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="absolute z-[1] w-[200px] h-fit bg-white border-2 border-[#767575] rounded-lg  pb-[2px] top-10 "
+        >
           <ul
             id="dropdown-scroll"
             className="h-[200px] w-full overflow-y-auto text-sm"
