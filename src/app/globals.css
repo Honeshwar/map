@@ -143,3 +143,15 @@
   color: #333 !important;
   font-weight: 700;
 }
+
+/* vertical slider */
+#vertical-splide .splide__slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px; /* Adjust based on your design */
+}
+
+#vertical-splide .splide__list {
+  height: auto;
+}

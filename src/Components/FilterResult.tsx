@@ -21,9 +21,9 @@ export default function FilterResult() {
 
       {/* result bar chart and Table */}
       <div className="w-full pt-4 md:pt-8 px-5 md:px-20 flex flex-col gap-8 md:gap-8">
-        <h1 className="text-[1rem] md:text-[1.5rem] font-bold text-[#d8ac00] text-center">
+        {/* <h1 className="text-[1rem] md:text-[1.5rem] font-bold text-[#d8ac00] text-center">
           Powered by: Dhruv Research
-        </h1>
+        </h1> */}
         {/* <ChartsComponents /> */}
 
         <ConstituencyTable />

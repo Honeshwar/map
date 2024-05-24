@@ -1,50 +1,49 @@
-.slidesr {
-  padding:15px 0px;
+#source_slider .slidesr {
+  padding: 15px 0px;
 }
 
 .container {
   padding: 2rem;
 }
 
-.slick-slide p {
-  color: #AEAEAE;
-font-family: Roboto;
-font-size: 14px;
-font-style: normal;
-font-weight: 400;
-line-height: 150%; /* 21px */
-letter-spacing: 0.28px;
-text-align: center;
- }
+#source_slider .slick-slide p {
+  color: #aeaeae;
+  font-family: Roboto;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 150%; /* 21px */
+  letter-spacing: 0.28px;
+  text-align: center;
+}
 
-.slick-slide.slick-center p{
-  /* transform: scale(2.1); */
+#source_slider .slick-slide.slick-center p {
   border-radius: 30px;
   background: #454545;
-  color:#ffcc02;
-  /* padding:px */
+  color: #ffcc02;
 }
 
-.s-prev{
+.s-prev {
   position: absolute;
-  top:0;
-  left:30% !important;
-  z-index:9999;
+  top: 0;
+  left: 30% !important;
+  z-index: 9999;
   background-color: transparent;
-  border:none;
+  border: none;
 }
 
-.s-next{
+.s-next {
   position: absolute;
-  top:auto !important;
-  bottom:0px !important;
-  left:30% !important;
+  top: auto !important;
+  bottom: 0px !important;
+  left: 30% !important;
   background-color: transparent;
-  border:none;
+  border: none;
 }
 
-.home_election > .table > thead{
+.home_election > .table > thead {
   border-radius: 2px;
-background: linear-gradient(187deg, #FFF 0%, #C2C2C2 89.73%);
-box-shadow: -0.24266px 1.97627px 1.99111px 0px #F7F7F7 inset, 0.24266px -1.97627px 1.99111px 0px #B8B8B8 inset;
+  background: linear-gradient(187deg, #fff 0%, #c2c2c2 89.73%);
+  box-shadow: -0.24266px 1.97627px 1.99111px 0px #f7f7f7 inset,
+    0.24266px -1.97627px 1.99111px 0px #b8b8b8 inset;
 }

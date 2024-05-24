@@ -28,31 +28,35 @@ interface yearAndSeats {
 }
 
 export default function DoughnutAndTable() {
-  const [electionResult, setElectionResult] = useState<any>([]);
+  const [electionResult, setElectionResult] = useState<any>(null);
   const [table, setTable] = useState<any>({});
-  const { select_sabha, select_state, select_constituency } =
-    useFilterContextValue();
-  const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => {
-    const getInitialElectionResult = async () => {
-      try {
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL +
-            `/result/election-result?election_type=${
-              select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-            }`
-        );
-        const responseData = await response.json();
-        // //console.log("response data doughnut and table", responseData.data);
-        extractData(responseData.data, false);
-        setLoading(false);
-      } catch (error) {
-        //console.log("error in fetch election result", error);
-      }
-    };
-    setLoading(true);
-    getInitialElectionResult();
-  }, [select_sabha]);
+  const {
+    select_sabha,
+    select_state,
+    select_constituency,
+    select_compare_year,
+  } = useFilterContextValue();
+  // const [loading, setLoading] = useState<boolean>(false);
+  // useEffect(() => {
+  //   const getInitialElectionResult = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         process.env.NEXT_PUBLIC_API_URL +
+  //           `/result/election-result?election_type=${
+  //             select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //           }`
+  //       );
+  //       const responseData = await response.json();
+  //       // //console.log("response data doughnut and table", responseData.data);
+  //       extractData(responseData.data, false);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       //console.log("error in fetch election result", error);
+  //     }
+  //   };
+  //   setLoading(true);
+  //   getInitialElectionResult();
+  // }, [select_sabha]);
 
   const { filterData, select_election_year } = useFilterContextValue();
   useEffect(() => {
@@ -160,106 +164,170 @@ export default function DoughnutAndTable() {
     // Sort the parties based on the first seat value
     return parties.sort((a, b) => getFirstSeatValue(b) - getFirstSeatValue(a));
   }
+
+  // useEffect(() => {
+  //   // if (select_state !== "Select State") {
+  //   const getElectionResultByState = async () => {
+  //     setLoading(true);
+  //     // console.log("state call");
+  //     try {
+  //       let encodedName = encodeURIComponent(select_state);
+  //       const response = await fetch(
+  //         process.env.NEXT_PUBLIC_API_URL +
+  //           `/result/election-result/filter?election_type=${
+  //             select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //           }${select_state !== "Select State" ? `&state=${encodedName}` : ""}`
+  //       );
+  //       const responseData = await response.json();
+  //       // console.log("response data doughnut and table", responseData.data);
+  //       extractData(responseData.data, false);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       //console.log("error in fetch election result by state", error);
+  //     }
+  //   };
+
+  //   getElectionResultByState();
+  //   // }
+  // }, [select_state]);
+
+  // useEffect(() => {
+  //   if (
+  //     select_state !== "Select State" &&
+  //     (select_sabha === "Vidhan Sabha"
+  //       ? select_constituency.acNo !== -1
+  //       : select_constituency.pcNo !== -1)
+  //   ) {
+  //     const getElectionResultByConstituency = async () => {
+  //       // console.log("assembly call");
+  //       setLoading(true);
+  //       try {
+  //         // let constitu = "";
+  //         // if (
+  //         //   select_sabha === "Vidhan Sabha" &&
+  //         //   select_constituency.acNo !== -1
+  //         // ) {
+  //         //   constitu = `&constituency=${select_constituency.acNo}`;
+  //         // } else if (
+  //         //   select_sabha === "LokSabha" &&
+  //         //   select_constituency.pcNo !== -1
+  //         // ) {
+  //         //   constitu = `&constituency=${select_constituency.pcNo}`;
+  //         // }
+  //         var encodedName = encodeURIComponent(select_state);
+
+  //         const response = await fetch(
+  //           process.env.NEXT_PUBLIC_API_URL +
+  //             `/result/election-result/filter?election_type=${
+  //               select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //             }&state=${encodedName}&constituency=${
+  //               select_sabha === "Vidhan Sabha"
+  //                 ? select_constituency.acNo
+  //                 : select_constituency.pcNo
+  //             }`
+  //         );
+  //         const responseData = await response.json();
+  //         // //console.log("response data doughnut and table", responseData.data);
+  //         extractData(responseData.data, false);
+  //         setLoading(false);
+  //       } catch (error) {
+  //         console.log("error in fetch election result by state", error);
+  //       }
+  //     };
+
+  //     getElectionResultByConstituency();
+  //   } else if (select_state !== "Select State") {
+  //     const getElectionResultByState = async () => {
+  //       // console.log("assembly/state call");
+  //       setLoading(true);
+  //       try {
+  //         let encodedName = encodeURIComponent(select_state);
+  //         const response = await fetch(
+  //           process.env.NEXT_PUBLIC_API_URL +
+  //             `/result/election-result?election_type=${
+  //               select_sabha === "Vidhan Sabha" ? "VS" : "LS"
+  //             }&state=${encodedName}`
+  //         );
+  //         const responseData = await response.json();
+  //         // console.log("response data doughnut and table", responseData.data);
+  //         extractData(responseData.data, false);
+  //         setLoading(false);
+  //       } catch (error) {
+  //         //console.log("error in fetch election result by state", error);
+  //       }
+  //     };
+
+  //     getElectionResultByState();
+  //   }
+  // }, [select_constituency]);
+
+  // all in one
+
   useEffect(() => {
-    // if (select_state !== "Select State") {
-    const getElectionResultByState = async () => {
-      setLoading(true);
-      // console.log("state call");
+    const getDoughnutAndTableData = async (url: string) => {
+      // setLoading(true);
       try {
-        let encodedName = encodeURIComponent(select_state);
-        const response = await fetch(
-          process.env.NEXT_PUBLIC_API_URL +
-            `/result/election-result?election_type=${
-              select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-            }${select_state !== "Select State" ? `&state=${encodedName}` : ""}`
-        );
+        const response = await fetch(url);
         const responseData = await response.json();
-        // console.log("response data doughnut and table", responseData.data);
         extractData(responseData.data, false);
-        setLoading(false);
+        // setLoading(false);
       } catch (error) {
-        //console.log("error in fetch election result by state", error);
+        console.log("error in doughnut and table", error);
       }
     };
 
-    getElectionResultByState();
-    // }
-  }, [select_state]);
-
-  useEffect(() => {
-    if (
-      select_state !== "Select State" &&
-      (select_sabha === "Vidhan Sabha"
+    const electionTypeParam =
+      select_sabha === "Vidhan Sabha" ? "election_type=VS" : "election_type=LS";
+    const stateParam =
+      select_state !== "Select State"
+        ? `&state=${encodeURIComponent(select_state)}`
+        : "";
+    const constituencyParam =
+      select_sabha === "Vidhan Sabha"
         ? select_constituency.acNo !== -1
-        : select_constituency.pcNo !== -1)
-    ) {
-      const getElectionResultByConstituency = async () => {
-        // console.log("assembly call");
-        setLoading(true);
-        try {
-          // let constitu = "";
-          // if (
-          //   select_sabha === "Vidhan Sabha" &&
-          //   select_constituency.acNo !== -1
-          // ) {
-          //   constitu = `&constituency=${select_constituency.acNo}`;
-          // } else if (
-          //   select_sabha === "LokSabha" &&
-          //   select_constituency.pcNo !== -1
-          // ) {
-          //   constitu = `&constituency=${select_constituency.pcNo}`;
-          // }
-          var encodedName = encodeURIComponent(select_state);
+          ? `&constituency=${select_constituency.acNo}`
+          : ""
+        : select_constituency.pcNo !== -1
+        ? `&constituency=${select_constituency.pcNo}`
+        : "";
+    const yearsParams =
+      select_election_year !== "Select Election year"
+        ? `&years=${JSON.stringify([
+            select_election_year,
+            ...select_compare_year,
+          ])}`
+        : "";
 
-          const response = await fetch(
-            process.env.NEXT_PUBLIC_API_URL +
-              `/result/election-result/filter?election_type=${
-                select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-              }&state=${encodedName}&constituency=${
-                select_sabha === "Vidhan Sabha"
-                  ? select_constituency.acNo
-                  : select_constituency.pcNo
-              }`
-          );
-          const responseData = await response.json();
-          // //console.log("response data doughnut and table", responseData.data);
-          extractData(responseData.data, false);
-          setLoading(false);
-        } catch (error) {
-          console.log("error in fetch election result by state", error);
-        }
-      };
-
-      getElectionResultByConstituency();
-    } else if (select_state !== "Select State") {
-      const getElectionResultByState = async () => {
-        // console.log("assembly/state call");
-        setLoading(true);
-        try {
-          let encodedName = encodeURIComponent(select_state);
-          const response = await fetch(
-            process.env.NEXT_PUBLIC_API_URL +
-              `/result/election-result?election_type=${
-                select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-              }&state=${encodedName}`
-          );
-          const responseData = await response.json();
-          // console.log("response data doughnut and table", responseData.data);
-          extractData(responseData.data, false);
-          setLoading(false);
-        } catch (error) {
-          //console.log("error in fetch election result by state", error);
-        }
-      };
-
-      getElectionResultByState();
-    }
-  }, [select_constituency]);
+    let url = "";
+    if (stateParam === "")
+      url =
+        process.env.NEXT_PUBLIC_API_URL +
+        "/result/election-result?" +
+        electionTypeParam +
+        stateParam +
+        constituencyParam +
+        yearsParams;
+    else
+      url =
+        process.env.NEXT_PUBLIC_API_URL +
+        "/result/election-result/filter?" +
+        electionTypeParam +
+        stateParam +
+        constituencyParam +
+        yearsParams;
+    getDoughnutAndTableData(url);
+  }, [
+    select_sabha,
+    select_state,
+    select_constituency,
+    select_election_year,
+    select_compare_year,
+  ]);
 
   return (
     <div className="w-full md:w-1/2 min-h-[80vh] flex justify-center flex-col gap-10 pt-5 md:pt-10 pb-10 px-0 md:px-10">
       {/* && electionResult?.party?.length > 0 */}
-      {!loading ? (
+      {true ? (
         <>
           <Doughnut electionResult={electionResult} totalSeats={totalSeats} />
           <Table data={table} />

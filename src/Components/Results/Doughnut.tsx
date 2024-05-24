@@ -12,6 +12,7 @@ import clsx from "clsx";
 ChartJS.register(ArcElement, Tooltip, Legend);
 import { PARTY_ALLIANCE_COLORS } from "@/utils/constants";
 import { useFilterContextValue } from "@/context/FilterContext";
+import Loading from "../Loading";
 
 const DoughnutChart = ({
   electionResult,
@@ -170,8 +171,11 @@ const DoughnutChart = ({
             </span>
           </div>
         </div>
+      ) : !electionResult ? (
+        // <p className="text-center text-green-500 font-extrabold"> Loading...</p>
+        <Loading />
       ) : (
-        <p className="text-center text-red-500 font-extrabold"> No data</p>
+        <p className="text-center text-red-500 font-extrabold">No data</p>
       )}
     </>
   );

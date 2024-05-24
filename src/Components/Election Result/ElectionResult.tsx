@@ -4,7 +4,8 @@ import { Splide, SplideSlide } from "@splidejs/react-splide";
 import "@splidejs/react-splide/css";
 import "./style.css";
 import "./test.css";
-
+// @ts-ignore
+import Slider from "react-slick";
 // or only core styles
 import "@splidejs/react-splide/css/core";
 import { useEffect, useRef, useState } from "react";
@@ -32,17 +33,32 @@ const options = {
   //   576: { perPage: 1, gap: "1rem", padding: "30px" },
   // },
 } as any;
-
+const splideOptions = {
+  direction: "ttb", // 'ttb' stands for top-to-bottom
+  height: "400px", // Set the height of the slider
+  wheel: true, // Enable mouse wheel navigation
+  arrows: true, // Show navigation arrows
+  pagination: true, // Show pagination dots
+};
 interface InitialData {
   election_type: string;
   state: string;
   title: string;
   year: string;
 }
+
+export interface ComparePollsters {
+  data: ComparePollstersData;
+  source: string;
+}
+
+export interface ComparePollstersData {
+  [key: string]: string;
+}
 export default function ElectionResult() {
   const splideRef = useRef<Splide>(null);
   const [selected_constituency, setSelected_constituency] =
-    useState<InitialData>();
+    useState<InitialData | null>();
   const [initialData, setInitialData] = useState<InitialData[]>([]);
   useEffect(() => {
     const getAC_NAME = async () => {
@@ -81,14 +97,10 @@ export default function ElectionResult() {
     getAC_NAME();
   }, []);
 
-  console.log(
-    "selected_constituency",
-    selected_constituency
-    // initialData
-  );
-
   // main content logic
-  const [comparePollsters, setComparePollsters] = useState([]);
+  const [comparePollsters, setComparePollsters] = useState<ComparePollsters[]>(
+    []
+  );
   useEffect(() => {
     const getComparePollster = async () => {
       const res = await fetch(
@@ -103,8 +115,18 @@ export default function ElectionResult() {
       console.log("resD getComparePollster", resD);
       setComparePollsters(resD.data);
     };
-    getComparePollster();
-  }, []);
+    if (selected_constituency) getComparePollster();
+  }, [selected_constituency]);
+
+  const [selected_pollster, setSelected_pollster] =
+    useState<string>("Compare Pollster");
+
+  console.log(
+    "selected_constituency",
+    selected_constituency,
+    // initialData
+    selected_pollster
+  );
   return (
     <div className="">
       <div className="container px-md-5 px-0">
@@ -120,7 +142,7 @@ export default function ElectionResult() {
             }
             role="group"
             aria-label="Splide Basic HTML Example"
-            style={{ height: "102px" }}
+            style={{ height: "102px !important" }}
           >
             {initialData.map((item: any, index) => (
               <SplideSlide
@@ -129,7 +151,7 @@ export default function ElectionResult() {
               >
                 <div
                   className={
-                    "agenda_card  m-4  h-[90%] flex justify-center items-center"
+                    "agenda_card   h-fit flex justify-center items-center"
                   }
                 >
                   <div className="  px-4 text-center">
@@ -187,6 +209,7 @@ export default function ElectionResult() {
               </p>
               <p className="ms-4">
                 <select
+                  onChange={(e) => setSelected_pollster(e.target.value)}
                   id="compare_election"
                   style={{
                     borderRadius: "4px",
@@ -202,11 +225,21 @@ export default function ElectionResult() {
                     padding: "7px 10px",
                   }}
                 >
-                  <option>Compare Pollster</option>
+                  <option value={"Compare Pollster"}>Compare Pollster</option>
+                  {/* <option>1</option>
                   <option>1</option>
                   <option>1</option>
-                  <option>1</option>
-                  <option>1</option>
+                  <option>1</option> */}
+                  {comparePollsters.map(
+                    (item: ComparePollsters, index: number) => (
+                      <option
+                        key={item.source + "-" + index}
+                        value={item.source}
+                      >
+                        {item.source}
+                      </option>
+                    )
+                  )}
                 </select>
               </p>
             </div>
@@ -214,10 +247,54 @@ export default function ElectionResult() {
             <div className="flex flex-wrap">
               <div className="md:w-1/3 pr-4 pl-4 w-1/3">
                 <div className="flex flex-wrap">
-                  <div
-                    className="md:w-full pr-4 pl-4 mt-4"
-                    id="source_slider"
-                  ></div>
+                  <div className="md:w-full pr-4 pl-4 mt-4" id="source_slider">
+                    <Slider
+                      settings={{
+                        vertical: true,
+                        verticalSwiping: true,
+                        centerMode: true,
+                        centerPadding: "60px",
+                        slidesToShow: 3,
+                        slidesToScroll: 1,
+                        prevArrow:
+                          "<button type='button' class='s-prev'><img src='CaretCircleDoubleUp.svg'></button>",
+                        nextArrow:
+                          "<button type='button' class='s-next'><img src='CaretCircleDoubleUp (1).svg'></button>",
+                        responsive: [
+                          {
+                            breakpoint: 768,
+                            settings: {
+                              arrows: true,
+                              centerMode: true,
+                              centerPadding: "40px",
+                              slidesToShow: 3,
+                            },
+                          },
+                          {
+                            breakpoint: 480,
+                            settings: {
+                              arrows: true,
+                              centerMode: true,
+                              centerPadding: "40px",
+                              slidesToShow: 1,
+                            },
+                          },
+                        ],
+                      }}
+                      className="centerslider"
+                    >
+                      {comparePollsters.map(
+                        (item: ComparePollsters, index: number) => (
+                          <div
+                            key={item.source + " - " + index}
+                            className="slidesr"
+                          >
+                            <p>{item.source}</p>
+                          </div>
+                        )
+                      )}
+                    </Slider>
+                  </div>
                 </div>
               </div>
               <div className="md:w-2/3 pr-4 pl-4 w-2/3 bg-white">
