@@ -20,7 +20,8 @@ import { useFilterContextValue } from "@/context/FilterContext";
 import hexRgb from "hex-rgb";
 import Loading from "../Loading";
 export default function Map() {
-  const windowWidth = window.innerWidth;
+  const windowWidth = window.innerWidth; //typeof window !== "undefined" ? window?.innerWidth : 700;
+  // console.log("windowWidth2", windowWidth);
 
   const mapRef = useRef<any>(null);
 

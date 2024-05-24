@@ -1,6 +1,7 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
-import ChartDataLabels from "chartjs-plugin-datalabels";
+// import ChartDataLabels from "chartjs-plugin-datalabels";
 import {
   Chart as ChartJS,
   ArcElement,
@@ -24,7 +25,8 @@ const DoughnutChart = ({
   };
   totalSeats: number;
 }) => {
-  const windowWidth = window.innerWidth;
+  const windowWidth = typeof window !== "undefined" ? window.innerWidth : 800; // window.innerWidth;
+  console.log("windowWidth", windowWidth);
   //console.log("electionResult", electionResult);
   const { select_sabha } = useFilterContextValue();
   // //console.log("doughnut electionResult", electionResult);
