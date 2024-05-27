@@ -643,6 +643,10 @@ export const STATE_COORDINATES = [
  * Default Party/Alliance Color
  */
 export const PARTY_ALLIANCE_COLORS = {
+  OTHERS: "gray",
+
+  INC: "#E64A1D",
+  KRPP: "#E64A1D",
   BJP: "#ED8918",
   SP: "#E64A1D",
   BSP: "#4171FE",

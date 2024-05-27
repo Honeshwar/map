@@ -190,10 +190,14 @@ function FilterContextProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const getMapResult = async () => {
       try {
+        const stateParams =
+          select_state !== "Select State"
+            ? `&state=${encodeURIComponent(select_state)}`
+            : "";
         const res = await fetch(
           `https://dhruvresearch.com/api/v2/result/map?election_type=${
             select_sabha === "Vidhan Sabha" ? "VS" : "LS"
-          }${select_state !== "Select State" ? `&state=${select_state}` : ""}${
+          }${stateParams}${
             select_election_year !== "Select Election year"
               ? `&year=${select_election_year}`
               : ""

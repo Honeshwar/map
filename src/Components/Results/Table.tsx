@@ -1,36 +1,30 @@
 import { useEffect, useState } from "react";
 import Pagination from "./Pagination";
 import { useFilterContextValue } from "@/context/FilterContext";
+import clsx from "clsx";
 
 //pagination logic move to pagination component and pass all data as props
 
-// interface D {
-//   party: string[];
-//   seats: any;
+// interface DATA {
+//   year: [],
+//   seats: {},
+//   party: [],
 // }
-export default function Table({ data }: any) {
-  function sortPartiesByFirstElement(parties: any) {
-    // Convert the object into an array of entries (key-value pairs)
-    const partiesArray = Object.entries(parties);
-    // console.log("partiesArray: ", partiesArray);
-    // Sort the array based on the first element of the array values
-    partiesArray.sort((a: any, b: any) => {
-      const aFirst = Array.isArray(a[1]) ? a[1][0] : a[1][0][0];
-      const bFirst = Array.isArray(b[1]) ? b[1][0] : b[1][0][0];
+export default function Table({
+  data,
+  sortPartiesBySeats,
+}: {
+  data: any;
 
-      if (aFirst === undefined) return 1;
-      if (bFirst === undefined) return -1;
-      return aFirst - bFirst;
-    });
+  sortPartiesBySeats: (
+    parties: string[],
+    seats: { [key: string]: number[] },
+    yearIndex: number,
+    isAscendingSort?: boolean
+  ) => string[];
+}) {
+  const [currTotalData, setCurrTotalData] = useState<any>(null);
 
-    // console.log("partiesArray: ", partiesArray);
-
-    // Convert the array back to an object
-    const sortedParties = Object.fromEntries(partiesArray);
-    return sortedParties;
-  }
-  // console.log("sorted data: ", sortPartiesByFirstElement(data.seats));
-  // console.log("table component", data);
   const bgColor = [
     "#b0b2ee",
     "#eff0f3",
@@ -56,8 +50,10 @@ export default function Table({ data }: any) {
         seats: data.seats, //[10, 20],
         party: data.party.slice(0, is_Mobile ? 5 : 5), //["BJP", "INC"],
       });
-      setTotalPages(Math.ceil(data.party.length / (is_Mobile ? 5 : 10)));
+      setTotalPages(Math.ceil(data.party.length / 5)); //(is_Mobile ? 5 : 10)));
       setIsMobile(is_Mobile);
+
+      setCurrTotalData(data);
     }
   }, [data]);
   const handlePageChange = (newPage: number) => {
@@ -66,8 +62,8 @@ export default function Table({ data }: any) {
     if (newPage > totalPages) newPage = 1;
 
     setCurrentData({
-      seats: data.seats, //[10, 20],
-      party: data.party.slice(
+      seats: currTotalData.seats, //[10, 20],
+      party: currTotalData.party.slice(
         (newPage - 1) * (isMobile ? 5 : 5),
         newPage * (isMobile ? 5 : 5)
       ), //["BJP", "INC"],
@@ -75,13 +71,15 @@ export default function Table({ data }: any) {
     // console.log("current page: ", newPage);
     setCurrentPage(newPage);
   };
+
+  const [isSortByAsc, setIsSortByAsc] = useState(true);
   return (
     <div className="w-[90%] mx-auto md:full h-fit   overflow-x-auto ">
       <table className="w-full border-2 border-[#b8b9bb] ">
         <caption id="table_1_caption" className="text-center   pb-3">
           {select_sabha === "Vidhan Sabha" ? "Assembly" : "Parliament"}{" "}
-          {/* {JSON.stringify(data) === "{}" && "2023 v/s 2018 vs 2014"} */}
-          {data?.year?.map((year: string, index: number) => (
+          {/* {JSON.stringify(currTotalData) === "{}" && "2023 v/s 2018 vs 2014"} */}
+          {currTotalData?.year?.map((year: string, index: number) => (
             <span key={index}>
               {index > 0 ? " v/s " : ""}
               {year}
@@ -95,16 +93,94 @@ export default function Table({ data }: any) {
             <th className="text-[#0f3352] border-2 border-solid border-[#505050] p-[5px] text-center">
               Party
             </th>
-            {data?.year?.map((year: string, index: number) => (
+            {currTotalData?.year?.map((year: string, index: number) => (
               <th
-                className="text-[#0f3352] border-2 border-solid border-[#505050] p-[10px] text-center"
+                className="relative text-[#0f3352] border-2 border-solid border-[#505050] p-[10px] text-center"
                 key={index}
               >
                 <span className="block">{year}</span>
                 <span className="text-[#3a3a3a] font-[400]">Results</span>
+                <span className="absolute top-0 bottom-0 right-2 flex flex-col justify-center">
+                  {/* decrease 3,2,1 */}
+
+                  <svg
+                    onClick={() => {
+                      const sortedParties = sortPartiesBySeats(
+                        currTotalData.party,
+                        currTotalData.seats,
+                        data.yearIndex,
+                        false
+                      );
+                      console.log("sortedParties", sortedParties);
+                      setCurrTotalData({
+                        ...currTotalData,
+                        party: sortedParties,
+                      });
+                      setCurrentData({
+                        seats: currTotalData.seats, //[10, 20],
+                        party: sortedParties.slice(0, 5), //["BJP", "INC"],
+                      });
+                      setCurrentPage(1);
+                      setIsSortByAsc(false);
+                    }}
+                    className={clsx("w-6 h-6 hover:fill-red-500", {
+                      "fill-red-500 ": !isSortByAsc,
+                      "fill-red-400 cursor-pointer": isSortByAsc,
+                    })}
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+
+                  {/* increase 1,2,3 */}
+
+                  <svg
+                    onClick={() => {
+                      const sortedParties = sortPartiesBySeats(
+                        currTotalData.party,
+                        currTotalData.seats,
+                        data.yearIndex,
+                        true
+                      );
+                      setCurrTotalData({
+                        ...currTotalData,
+                        party: sortedParties,
+                      });
+                      setCurrentData({
+                        seats: currTotalData.seats, //[10, 20],
+                        party: sortedParties.slice(0, 5), //["BJP", "INC"],
+                      });
+                      setCurrentPage(1);
+                      setIsSortByAsc(true);
+                    }}
+                    className={clsx("w-6 h-6 -mt-2 hover:fill-green-500  ", {
+                      "fill-green-500 ": isSortByAsc,
+                      "fill-green-400 cursor-pointer": !isSortByAsc,
+                    })}
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </span>
               </th>
             ))}
-            {/* {JSON.stringify(data) === "{}" && (
+            {/* {JSON.stringify(currTotalData) === "{}" && (
               <>
                 <th className="text-[#0f3352] border-2 border-solid border-[#505050] p-[10px] text-center">
                   <span className="block">2023</span>
@@ -129,7 +205,7 @@ export default function Table({ data }: any) {
                 {name}
               </th>
 
-              {data.year.map((v: string, index: number) => (
+              {currTotalData.year.map((v: string, index: number) => (
                 <td
                   className="text-[#1b1c1e] border-2 border-solid border-[#505050] p-[15px] text-center"
                   key={index}
@@ -142,7 +218,7 @@ export default function Table({ data }: any) {
             </tr>
           ))}
 
-          {/* {JSON.stringify(data) === "{}" && (
+          {/* {JSON.stringify(currTotalData) === "{}" && (
             <>
               <tr style={{ backgroundColor: "#b0b2ee" }}>
                 <th className="text-[#1f1f1f] border-2 border-solid border-[#505050] p-[10px] text-center">
@@ -222,7 +298,7 @@ export default function Table({ data }: any) {
         totalPages={totalPages}
         currentPage={currentPage}
         handlePageChange={handlePageChange}
-        totalResults={data?.party?.length}
+        totalResults={currTotalData?.party?.length}
       />
     </div>
   );

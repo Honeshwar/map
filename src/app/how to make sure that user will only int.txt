@@ -1,0 +1,1 @@
+how to make sure that user will only intract with UI after all component render and api calleded

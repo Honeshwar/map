@@ -93,7 +93,7 @@ export default function Pagination({
       </div>
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
-          <p className="text-sm text-gray-700">
+          <p className="text-sm text-gray-700 flex flex-wrap gap-1">
             Showing
             <span className="font-medium"> {currentPage} </span>
             to

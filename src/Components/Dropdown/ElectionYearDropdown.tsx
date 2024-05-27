@@ -284,9 +284,9 @@ export default function ElectionYearDropdown() {
                   e.stopPropagation();
                   if (
                     select_state !== "Select State" &&
-                    (select_sabha === "Lok Sabha"
-                      ? select_constituency.pcNo !== -1
-                      : select_constituency.acNo !== -1) &&
+                    // (select_sabha === "Lok Sabha"
+                    //   ? select_constituency.pcNo !== -1
+                    //   : select_constituency.acNo !== -1) &&
                     currentSelectedYear !== "Select Election year"
                   ) {
                     setSelect_compare_year(compareYears);

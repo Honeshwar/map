@@ -107,13 +107,14 @@ export default function StateDropdown() {
                 }
               )}
               onClick={() => {
-                resetFilterToInitial(3);
-                setShowStateDropDown(false);
+                // resetFilterToInitial(3);
+                // setShowStateDropDown(false);
 
-                setSelect_state("Select State");
+                // setSelect_state("Select State");
+                handleSelectState("Select State");
               }}
             >
-              Select State {select_sabha === "Vidhan Sabha" ? "" : "& UTs"}
+              {select_sabha === "Vidhan Sabha" ? "" : "Select State & UTs"}
             </li>
             {states?.map((state, index) => (
               <li

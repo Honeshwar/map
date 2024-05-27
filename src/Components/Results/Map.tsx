@@ -59,28 +59,79 @@ export default function Map() {
   }, [select_sabha]);
 
   useEffect(() => {
-    if (select_state !== "Select State") {
+    if (select_state === "Select State") {
+      setViewport(
+        isRendering1
+          ? {
+              longitude: windowWidth < 640 ? 78.9629 : 78.9629 + 1,
+              latitude: windowWidth < 640 ? 20.5937 : 20.5937 - 5,
+              zoom: 3.5,
+            }
+          : {
+              longitude: windowWidth < 640 ? 78.9629 : 78.9629 + 1,
+              latitude: windowWidth < 640 ? 20.5937 : 20.5937 - 5,
+              zoom: 3.51,
+            }
+      );
+      setIsRendering1((p) => !p);
+      // setStateName(select_state);
+      // setLayers([]);
+    } else if (select_state !== "Select State") {
       const stateCoordinates = STATE_COORDINATES.find(
         (row) => row.state.toUpperCase() === select_state.toUpperCase()
       );
 
       //console.log("stateCoordinates", stateCoordinates);
       if (!stateCoordinates) return;
+      setViewport(
+        isRendering2
+          ? {
+              latitude: stateCoordinates.latitude - 0.1,
+              longitude: stateCoordinates.longitude,
+              zoom:
+                windowWidth < 800
+                  ? stateCoordinates.zoom * 0.82 + 1
+                  : stateCoordinates.zoom * 0.82 + 1,
+            }
+          : {
+              latitude: stateCoordinates.latitude - 0.1,
+              longitude: stateCoordinates.longitude,
+              zoom:
+                windowWidth < 800
+                  ? stateCoordinates.zoom * 0.82000001 + 1
+                  : stateCoordinates.zoom * 0.82 + 1.2,
+            }
+      );
 
-      setViewport({
-        latitude: stateCoordinates.latitude,
-        longitude: stateCoordinates.longitude,
-        zoom:
-          windowWidth < 800
-            ? stateCoordinates.zoom * 0.82
-            : stateCoordinates.zoom * 0.82,
-      });
+      setIsRendering2((p) => !p);
 
       // setStateName(select_state);
       // setLayers([]);
     }
   }, [select_state]);
   useEffect(() => {
+    // if (
+    //   select_sabha === "Lok Sabha"
+    //     ? select_constituency.pcNo !== -1
+    //     : select_constituency.acNo !== -1
+    // ) {
+    //   setViewport(
+    //     isRendering1
+    //       ? {
+    //           longitude: windowWidth < 640 ? 78.9629 : 78.9629 + 1,
+    //           latitude: windowWidth < 640 ? 20.5937 : 20.5937 - 5,
+    //           zoom: 3.5,
+    //         }
+    //       : {
+    //           longitude: windowWidth < 640 ? 78.9629 : 78.9629 + 1,
+    //           latitude: windowWidth < 640 ? 20.5937 : 20.5937 - 5,
+    //           zoom: 3.51,
+    //         }
+    //   );
+    //   setIsRendering1((p) => !p);
+    //   // setStateName(select_state);
+    //   // setLayers([]);
+    // } else
     if (
       select_sabha === "Lok Sabha"
         ? select_constituency.pcNo !== -1
@@ -93,14 +144,27 @@ export default function Map() {
       //console.log("stateCoordinates", stateCoordinates);
       if (!stateCoordinates) return;
 
-      setViewport({
-        latitude: stateCoordinates.latitude,
-        longitude: stateCoordinates.longitude,
-        zoom:
-          windowWidth < 800
-            ? stateCoordinates.zoom * 0.82
-            : stateCoordinates.zoom * 0.82,
-      });
+      setViewport(
+        isRendering2
+          ? {
+              latitude: stateCoordinates.latitude,
+              longitude: stateCoordinates.longitude,
+              zoom:
+                windowWidth < 800
+                  ? stateCoordinates.zoom * 0.82 + 1
+                  : stateCoordinates.zoom * 0.82 + 1,
+            }
+          : {
+              latitude: stateCoordinates.latitude,
+              longitude: stateCoordinates.longitude,
+              zoom:
+                windowWidth < 800
+                  ? stateCoordinates.zoom * 0.821 + 1
+                  : stateCoordinates.zoom * 0.82 + 1,
+            }
+      );
+
+      setIsRendering2((p) => !p);
 
       // setStateName(select_state);
       // setLayers([]);
@@ -117,7 +181,7 @@ export default function Map() {
       if (select_sabha === "Lok Sabha") {
         layers = [
           new GeoJsonLayer({
-            id: "geojson-layer-2", //@ts-ignore
+            id: "geojson-layer-1", //@ts-ignore
             data: PCGeojson,
             stroked: true,
             filled: true,
@@ -126,7 +190,7 @@ export default function Map() {
             //@ts-ignore
             getFillColor: (d) => _fillGeoJsonColor(d), //@ts-ignore
             getLineColor: DEFAULT_DISTRICT_LINE_COLOR_GENERAL,
-            getLineWidth: select_sabha === "Lok Sabha" ? 10 : 2, //@ts-ignore
+            getLineWidth: 10, //@ts-ignore
             onClick:
               select_constituency.pcNo === -1
                 ? ({ object }: any) => _handleMap(object)
@@ -147,32 +211,30 @@ export default function Map() {
             // },
           }),
           new GeoJsonLayer({
-            id: "state-geojson-layer-2", //@ts-ignore
+            id: "state-geojson-layer-1", //@ts-ignore
             data: StateGeojson,
             stroked: true,
             filled: false,
             lineWidthScale: 600, //@ts-ignore
-            getLineColor:
-              select_sabha === "Vidhan Sabha"
-                ? TRANSPARENT_COLOR
-                : DEFAULT_STATE_LINE_COLOR, //@ts-ignore
+            getLineColor: DEFAULT_STATE_LINE_COLOR, //@ts-ignore
             getFillColor: TRANSPARENT_COLOR,
             getLineWidth: 4,
           }),
         ];
       } else {
         layers = [
+          // only for assembly
           new GeoJsonLayer({
             id: "geojson-layer-2", //@ts-ignore
             data: ACGeojson,
             stroked: true,
             filled: true,
             pickable: true,
-            lineWidthScale: 200,
+            lineWidthScale: 110,
             //@ts-ignore
             getFillColor: (d) => _fillGeoJsonColor(d), //@ts-ignore
             getLineColor: (d) => fillDefaultLineColor(d), //DEFAULT_DISTRICT_LINE_COLOR_GENERAL, //@ts-ignore
-            getLineWidth: 2, //@ts-ignore
+            getLineWidth: 10, //@ts-ignore
             //@ts-ignore
             onClick:
               select_constituency.acNo === -1
@@ -180,6 +242,7 @@ export default function Map() {
                 : null,
             updateTriggers: {
               getFillColor: [mapResult, select_constituency], // Trigger update when filter changes
+              getLineColor: [mapResult, select_constituency],
             },
             // transitions: {
             //   getFillColor: {
@@ -188,14 +251,15 @@ export default function Map() {
             //   },
             // },
           }),
+          // only for state
           new GeoJsonLayer({
             id: "state-geojson-layer-2", //@ts-ignore
             data: StateGeojson,
             stroked: true,
             filled: false,
             lineWidthScale: 600, //@ts-ignore
-            getLineColor: DEFAULT_STATE_LINE_COLOR, //@ts-ignore
-            getFillColor: TRANSPARENT_COLOR,
+            getLineColor: TRANSPARENT_COLOR, //DEFAULT_STATE_LINE_COLOR, //@ts-ignore
+            getFillColor: [0, 0, 0, 0],
             getLineWidth: 4,
           }),
         ];
@@ -214,11 +278,18 @@ export default function Map() {
 
   //console.log(process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN);
   function fillDefaultLineColor(d: any) {
-    // console.log(d.properties.ST_NAME.toUpperCase(), select_state.toUpperCase());
+    console.log(
+      "fillDefaultLineColor",
+      d.properties.ST_NAME.toUpperCase() === select_state.toUpperCase()
+    );
     if (d.properties.ST_NAME.toUpperCase() === select_state.toUpperCase()) {
-      return "#000";
+      console.log(
+        d.properties.ST_NAME.toUpperCase(),
+        select_state.toUpperCase()
+      );
+      return [0, 0, 0];
     } else {
-      return "lightgray";
+      return [0, 0, 0, 0];
     }
   }
   function _handleMap(object: any) {
@@ -337,10 +408,9 @@ export default function Map() {
     else {
       //console.log("AC", mapResult, d.properties);
       if (
-        mapResult
-        // &&
-        // mapResult[d.properties.ST_NAME] &&
-        // mapResult[d.properties.ST_NAME][d.properties.AC_NO]
+        mapResult &&
+        mapResult[d.properties.ST_NAME] &&
+        mapResult[d.properties.ST_NAME][d.properties.AC_NO]
       ) {
         // //console.log("mapResult", stateName, d.properties.ST_NAME);
         // for single state selection only fill color
@@ -432,6 +502,7 @@ export default function Map() {
   };
 
   const _getTooltip = ({ object, x, y }: any) => {
+    // console.log("map", object);
     if (tooltipRef.current) {
       tooltipRef.current.style.display = "none";
       tooltipRef.current.innerHTML = "";
@@ -657,7 +728,7 @@ export default function Map() {
           : {
               longitude: windowWidth < 640 ? 78.9629 : 78.9629 + 1,
               latitude: windowWidth < 640 ? 20.5937 : 20.5937 - 5,
-              zoom: 3.51,
+              zoom: 3.5000001,
             }
       );
       setIsRendering1((p) => !p);
@@ -672,20 +743,20 @@ export default function Map() {
       setViewport(
         isRendering2
           ? {
-              latitude: stateCoordinates.latitude,
+              latitude: stateCoordinates.latitude - 0.1,
               longitude: stateCoordinates.longitude,
               zoom:
                 windowWidth < 800
-                  ? stateCoordinates.zoom * 0.82
-                  : stateCoordinates.zoom * 0.82,
+                  ? stateCoordinates.zoom * 0.82 + 1
+                  : stateCoordinates.zoom * 0.82 + 1.2,
             }
           : {
-              latitude: stateCoordinates.latitude,
+              latitude: stateCoordinates.latitude - 0.1,
               longitude: stateCoordinates.longitude,
               zoom:
                 windowWidth < 800
-                  ? stateCoordinates.zoom * 0.821
-                  : stateCoordinates.zoom * 0.82,
+                  ? stateCoordinates.zoom * 0.82000001 + 1
+                  : stateCoordinates.zoom * 0.82 + 1.2,
             }
       );
 
@@ -698,7 +769,7 @@ export default function Map() {
       {layers.length > 0 ? (
         <div
           ref={containerRef}
-          className="w-full  h-[80vh] md:h-auto md:w-1/2 min-w-[300px] flex-1 z-0 flex justify-end relative  "
+          className="w-full bg-gray-200  h-[80vh] md:h-auto md:w-1/2 min-w-[300px] flex-1 z-0 flex justify-end relative  "
         >
           <DeckGL
             initialViewState={viewport}
@@ -753,7 +824,7 @@ export default function Map() {
               // onViewportChange={(nextViewport: any) =>
               //   setViewport(nextViewport)
               // }
-              mapStyle="mapbox://styles/mapbox/light-v9"
+              // mapStyle="mapbox://styles/mapbox/light-v9"
               mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_API_TOKEN}
               reuseMaps
               // preventStyleDiffing={true}

@@ -12,7 +12,13 @@ export default function FilterResult() {
   return (
     <section>
       {/* doughnut, table and map  */}
-      <div className="w-full bg-[#f2cbd1] border-t-2 border-b-2 border-yellow-400 flex justify-start md:justify-between flex-wrap ">
+      <div
+        className="w-full bg-[#f2cbd1] border-t-2 border-b-2 border-yellow-400 flex justify-start md:justify-between flex-wrap "
+        style={{
+          background:
+            "linear-gradient(180deg, #FFF7DF 0%, #FFFDF2 58.74%, #FFF6DA 113.54%)",
+        }}
+      >
         <DoughnutAndTable />
 
         {/* {loading ? <Loading /> : <LazyMap />} */}

@@ -371,13 +371,18 @@ export default function ConstituencyTable() {
         <h1 className="text-[1rem] md:text-[1.5rem] font-bold text-[#d8ac00] text-center">
           Powered by: ECI
         </h1>
-        <Filter
+        {/* <Filter
           filter={filter}
           sortTable={sortTable}
           setFilter={setFilter}
           currentData={currentData}
           setCurrentData={setCurrentData}
-        />
+        /> */}
+        <div className="absolute   md:top-10 right-0  text-[1.2rem] text-[gray]">
+          <span className="text-[.8rem] md:text-[1rem] text-black font-semibold">
+            Candidate
+          </span>
+        </div>
       </div>
       <div className="w-full flex flex-col gap-5 pb-8 ">
         <h1 className="text-[.8rem] md:text-[1.5rem] font-[600]">

@@ -71,13 +71,18 @@ export default function DoughnutAndTable() {
       year: [],
       seats: {},
       party: [],
+      yearIndex: 0,
     } as any;
+
     const doughnutData = {
       seats: [],
       party: [],
+      year: 2019,
+      yearIndex: 0,
     } as {
       seats: number[];
       party: string[];
+      year: number;
     };
     let incrementCount = 0,
       yearSelect = false,
@@ -85,6 +90,10 @@ export default function DoughnutAndTable() {
       totalYearCount = Object.keys(data).length;
     for (const year in data) {
       tableData.year.push(year); //year add in table
+
+      if (year === select_election_year) {
+        tableData.yearIndex = tableData.year.length - 1;
+      }
       for (const obj of data[year]) {
         // for initial data only
         // if (isInitialData && (year == "2020" || year == "2019")) {
@@ -103,6 +112,7 @@ export default function DoughnutAndTable() {
         if (!isInitialData && year == select_election_year) {
           doughnutData.seats.push(Number(obj.seats));
           doughnutData.party.push(obj.party);
+          doughnutData.year = Number(select_election_year);
         } else if (
           !isInitialData &&
           select_election_year === "Select Election year" &&
@@ -112,6 +122,9 @@ export default function DoughnutAndTable() {
           //last year select
           doughnutData.seats.push(Number(obj.seats));
           doughnutData.party.push(obj.party);
+          doughnutData.year = Number(year);
+
+          tableData.yearIndex = tableData.year.length - 1;
         }
 
         if (tableData.seats[obj.party] === undefined) {
@@ -132,37 +145,79 @@ export default function DoughnutAndTable() {
     }
 
     // //console.log("table data", tableData);
-    const sortedParties = sortPartiesBySeats(tableData.party, tableData.seats);
+    const sortedParties = sortPartiesBySeats(
+      tableData.party,
+      tableData.seats,
+      tableData.yearIndex,
+      true
+    );
     tableData.party = sortedParties;
     setTable(tableData);
     // console.log("doughnut data", doughnutData);
-    setElectionResult(doughnutData);
+    // setElectionResult(doughnutData);
 
+    //calculate total seats
     let ts = 0;
     for (let a = 0; a < doughnutData.party.length; a++) {
       ts += doughnutData.seats[a];
     }
     setTotalSeats(ts);
-  };
 
+    if (doughnutData.party.length > 3) {
+      // sort doughnut data to filter it
+      console.log("doughnutData", doughnutData);
+      const indices = doughnutData.seats.map((value, index) => index);
+
+      indices.sort((i, j) => doughnutData.seats[j] - doughnutData.seats[i]);
+
+      const sortedParty = indices.map((index) => doughnutData.party[index]);
+      const sortSeats = indices.map((index) => doughnutData.seats[index]);
+
+      let totalTOp3Seats = 0;
+      for (let i = 0; i < 3; i++) {
+        totalTOp3Seats += sortSeats[i];
+      }
+      const doughnutDataSorted = {
+        ...doughnutData,
+        seats: [...sortSeats.slice(0, 3), ts - totalTOp3Seats],
+        party: [...sortedParty.slice(0, 3), "OTHERS"],
+      };
+      setElectionResult(doughnutDataSorted);
+
+      console.log("doughnut data sorted", doughnutDataSorted);
+    } else {
+      setElectionResult(doughnutData);
+    }
+  };
   function sortPartiesBySeats(
     parties: string[],
-    seats: { [key: string]: number[] }
+    seats: { [key: string]: number[] },
+    yearIndex: number,
+    isAscendingSort?: boolean
   ) {
     // Helper function to get the first seat value or handle undefined cases
     function getFirstSeatValue(party: string) {
-      if (
-        seats[party] &&
-        Array.isArray(seats[party]) &&
-        seats[party][0] !== undefined
-      ) {
-        return seats[party][0];
+      if (seats[party] && Array.isArray(seats[party])) {
+        if (seats[party][yearIndex] !== undefined)
+          return seats[party][yearIndex];
+
+        for (let i = 0; i < seats[party].length; i++) {
+          if (seats[party][i] !== undefined) return seats[party][i];
+        }
+        // if (seats[party][0] !== undefined) return seats[party][0];
       }
       return 0; // Default to 0 if undefined or not available
     }
 
     // Sort the parties based on the first seat value
-    return parties.sort((a, b) => getFirstSeatValue(b) - getFirstSeatValue(a));
+    if (isAscendingSort)
+      return parties.sort(
+        (a, b) => getFirstSeatValue(b) - getFirstSeatValue(a)
+      );
+    else
+      return parties.sort(
+        (a, b) => getFirstSeatValue(a) - getFirstSeatValue(b)
+      );
   }
 
   // useEffect(() => {
@@ -325,12 +380,12 @@ export default function DoughnutAndTable() {
   ]);
 
   return (
-    <div className="w-full md:w-1/2 min-h-[80vh] flex justify-center flex-col gap-10 pt-5 md:pt-10 pb-10 px-0 md:px-10">
+    <div className="w-full md:w-1/2 min-h-[80vh] flex justify-center flex-col gap-10 pt-5 md:pt-7 pb-10 px-0 md:px-10 relative">
       {/* && electionResult?.party?.length > 0 */}
       {true ? (
         <>
           <Doughnut electionResult={electionResult} totalSeats={totalSeats} />
-          <Table data={table} />
+          <Table data={table} sortPartiesBySeats={sortPartiesBySeats} />
         </>
       ) : (
         <Loading />

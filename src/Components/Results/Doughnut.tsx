@@ -22,11 +22,12 @@ const DoughnutChart = ({
   electionResult: {
     seats: number[];
     party: string[];
+    year: number;
   };
   totalSeats: number;
 }) => {
   const windowWidth = typeof window !== "undefined" ? window.innerWidth : 800; // window.innerWidth;
-  console.log("windowWidth", windowWidth);
+  // console.log("windowWidth", windowWidth);
   //console.log("electionResult", electionResult);
   const { select_sabha } = useFilterContextValue();
   // //console.log("doughnut electionResult", electionResult);
@@ -125,52 +126,59 @@ const DoughnutChart = ({
   return (
     <>
       {electionResult?.party?.length > 0 ? (
-        <div className="w-full flex justify-center mx-auto max-h-fit relative px-0  md:px-20 ">
-          <Doughnut
-            // plugins={[CenterLabelPlugin]}
-            className={clsx(" w-[380px] mx-auto md:m-0 h-fit ", {})}
-            data={data}
-            options={options}
-          />{" "}
-          <div
-            className={clsx(
-              "  absolute left-0 right-0 mx-auto top-[45%]  text-center",
-              {
-                "top-[52%] md:top-[65%]": electionResult?.party.length <= 6,
-                // "top-[32%] md:top-[45%]": electionResult?.party.length >= 7,
-                "top-[31%] md:top-[55%]":
-                  electionResult?.party.length >= 7 &&
-                  electionResult?.party.length <= 20,
-                "top-[31%] md:top-[45%]":
-                  electionResult?.party.length >= 21 &&
-                  electionResult?.party.length <= 30,
-                "top-[31%] md:top-[35%]":
-                  electionResult?.party.length >= 31 &&
-                  electionResult?.party.length <= 40,
+        <div>
+          <h1 className=" mb-3 sm:mb-5   text-[1rem] md:text-[1.5rem] font-bold text-[#d8ac00] text-center  ">
+            {select_sabha === "Vidhan Sabha" ? "VS" : "LS"}{" "}
+            {electionResult?.year} Election
+          </h1>
 
-                "top-[31%] md:top-[25%]":
-                  electionResult?.party.length >= 41 &&
-                  electionResult?.party.length <= 50,
-                "top-[31%] md:top-[15%]":
-                  electionResult?.party.length >= 51 &&
-                  electionResult?.party.length <= 60,
-                "top-[31%] md:top-[5%]":
-                  electionResult?.party.length >= 61 &&
-                  electionResult?.party.length <= 70,
+          <div className="w-full flex justify-center mx-auto max-h-fit relative px-0  md:px-20 mt-3">
+            <Doughnut
+              // plugins={[CenterLabelPlugin]}
+              className={clsx(" w-[380px] mx-auto md:m-0 h-fit ", {})}
+              data={data}
+              options={options}
+            />{" "}
+            <div
+              className={clsx(
+                "  absolute left-0 right-0 mx-auto top-[45%]  text-center",
+                {
+                  "top-[52%] md:top-[65%]": electionResult?.party.length <= 6,
+                  // "top-[32%] md:top-[45%]": electionResult?.party.length >= 7,
+                  "top-[31%] md:top-[55%]":
+                    electionResult?.party.length >= 7 &&
+                    electionResult?.party.length <= 20,
+                  "top-[31%] md:top-[45%]":
+                    electionResult?.party.length >= 21 &&
+                    electionResult?.party.length <= 30,
+                  "top-[31%] md:top-[35%]":
+                    electionResult?.party.length >= 31 &&
+                    electionResult?.party.length <= 40,
 
-                // &&
-                // select_sabha === "Lok Sabha",
-              }
-            )}
-          >
-            <span
-              className="text-md sm:text-3xl font-bold"
-              style={{
-                color: "gray",
-              }}
+                  "top-[31%] md:top-[25%]":
+                    electionResult?.party.length >= 41 &&
+                    electionResult?.party.length <= 50,
+                  "top-[31%] md:top-[15%]":
+                    electionResult?.party.length >= 51 &&
+                    electionResult?.party.length <= 60,
+                  "top-[31%] md:top-[5%]":
+                    electionResult?.party.length >= 61 &&
+                    electionResult?.party.length <= 70,
+
+                  // &&
+                  // select_sabha === "Lok Sabha",
+                }
+              )}
             >
-              {totalSeats === 0 ? "" : totalSeats}
-            </span>
+              <span
+                className="text-md sm:text-3xl font-bold"
+                style={{
+                  color: "gray",
+                }}
+              >
+                {totalSeats === 0 ? "" : totalSeats}
+              </span>
+            </div>
           </div>
         </div>
       ) : !electionResult ? (
