@@ -148,7 +148,8 @@ export default function DoughnutAndTable() {
     const sortedParties = sortPartiesBySeats(
       tableData.party,
       tableData.seats,
-      tableData.yearIndex,
+      // tableData.yearIndex,
+      0,
       true
     );
     tableData.party = sortedParties;
@@ -195,29 +196,34 @@ export default function DoughnutAndTable() {
     yearIndex: number,
     isAscendingSort?: boolean
   ) {
+    console.log(seats);
     // Helper function to get the first seat value or handle undefined cases
     function getFirstSeatValue(party: string) {
       if (seats[party] && Array.isArray(seats[party])) {
         if (seats[party][yearIndex] !== undefined)
           return seats[party][yearIndex];
 
-        for (let i = 0; i < seats[party].length; i++) {
-          if (seats[party][i] !== undefined) return seats[party][i];
-        }
+        // for (let i = 0; i < seats[party].length; i++) {
+        //   if (seats[party][i] !== undefined) return seats[party][i];
+        // }
         // if (seats[party][0] !== undefined) return seats[party][0];
       }
-      return 0; // Default to 0 if undefined or not available
+      return undefined; // Default to 0 if undefined or not available
     }
 
     // Sort the parties based on the first seat value
-    if (isAscendingSort)
-      return parties.sort(
-        (a, b) => getFirstSeatValue(b) - getFirstSeatValue(a)
-      );
-    else
-      return parties.sort(
-        (a, b) => getFirstSeatValue(a) - getFirstSeatValue(b)
-      );
+    return parties.sort((a, b) => {
+      const seatA = getFirstSeatValue(a);
+      const seatB = getFirstSeatValue(b);
+
+      // Handle undefined values: treat them as greater when sorting ascending, and as smaller when sorting descending
+      if (seatA === undefined && seatB === undefined) return 0;
+      if (seatA === undefined) return 1; //isAscendingSort ? 1 : 1;
+      if (seatB === undefined) return -1; //isAscendingSort ? -1 : -1;
+
+      // Perform the standard comparison for defined values
+      return isAscendingSort ? seatA - seatB : seatB - seatA;
+    });
   }
 
   // useEffect(() => {

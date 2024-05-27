@@ -104,25 +104,30 @@ export default function Table({
                   {/* decrease 3,2,1 */}
 
                   <svg
-                    onClick={() => {
-                      const sortedParties = sortPartiesBySeats(
-                        currTotalData.party,
-                        currTotalData.seats,
-                        data.yearIndex,
-                        false
-                      );
-                      console.log("sortedParties", sortedParties);
-                      setCurrTotalData({
-                        ...currTotalData,
-                        party: sortedParties,
-                      });
-                      setCurrentData({
-                        seats: currTotalData.seats, //[10, 20],
-                        party: sortedParties.slice(0, 5), //["BJP", "INC"],
-                      });
-                      setCurrentPage(1);
-                      setIsSortByAsc(false);
-                    }}
+                    onClick={
+                      isSortByAsc
+                        ? () => {
+                            const sortedParties = sortPartiesBySeats(
+                              currTotalData.party,
+                              currTotalData.seats,
+                              // data.yearIndex,
+                              index,
+                              false
+                            );
+                            console.log("sortedParties", sortedParties);
+                            setCurrTotalData({
+                              ...currTotalData,
+                              party: sortedParties,
+                            });
+                            setCurrentData({
+                              seats: currTotalData.seats, //[10, 20],
+                              party: sortedParties.slice(0, 5), //["BJP", "INC"],
+                            });
+                            setCurrentPage(1);
+                            setIsSortByAsc(false);
+                          }
+                        : () => {}
+                    }
                     className={clsx("w-6 h-6 hover:fill-red-500", {
                       "fill-red-500 ": !isSortByAsc,
                       "fill-red-400 cursor-pointer": isSortByAsc,
@@ -143,24 +148,30 @@ export default function Table({
                   {/* increase 1,2,3 */}
 
                   <svg
-                    onClick={() => {
-                      const sortedParties = sortPartiesBySeats(
-                        currTotalData.party,
-                        currTotalData.seats,
-                        data.yearIndex,
-                        true
-                      );
-                      setCurrTotalData({
-                        ...currTotalData,
-                        party: sortedParties,
-                      });
-                      setCurrentData({
-                        seats: currTotalData.seats, //[10, 20],
-                        party: sortedParties.slice(0, 5), //["BJP", "INC"],
-                      });
-                      setCurrentPage(1);
-                      setIsSortByAsc(true);
-                    }}
+                    onClick={
+                      !isSortByAsc
+                        ? () => {
+                            const sortedParties = sortPartiesBySeats(
+                              currTotalData.party,
+                              currTotalData.seats,
+                              // data.yearIndex,
+                              index,
+                              true
+                            );
+                            console.log("sortedParties", sortedParties);
+                            setCurrTotalData({
+                              ...currTotalData,
+                              party: sortedParties,
+                            });
+                            setCurrentData({
+                              seats: currTotalData.seats, //[10, 20],
+                              party: sortedParties.slice(0, 5), //["BJP", "INC"],
+                            });
+                            setCurrentPage(1);
+                            setIsSortByAsc(true);
+                          }
+                        : () => {}
+                    }
                     className={clsx("w-6 h-6 -mt-2 hover:fill-green-500  ", {
                       "fill-green-500 ": isSortByAsc,
                       "fill-green-400 cursor-pointer": !isSortByAsc,

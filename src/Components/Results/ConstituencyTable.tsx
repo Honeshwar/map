@@ -36,7 +36,7 @@ export default function ConstituencyTable() {
     constituencyFilterData,
   } = useFilterContextValue();
 
-  const [filter, setFilter] = useState<string>("candidate"); //candidate or party
+  // const [filter, setFilter] = useState<string>("candidate"); //candidate or party
   // const [filterCall, setFilterCall] = useState(false); //candidate or party
   const [loading, setLoading] = useState(false);
   // useEffect(() => {
@@ -112,7 +112,7 @@ export default function ConstituencyTable() {
         const responseData = await response.json();
         //console.log("resopnse ", responseData, responseData.data);
 
-        setCurrentData(sortTable(responseData.data.data, filter));
+        setCurrentData(responseData.data.data); //sortTable(responseData.data.data, filter));
         setTotalPages(Math.ceil(responseData.data.totalCount / 7));
         // setTotalPages(responseData.data.previousPage); //totalCOunt/limit
         setTotalResults(responseData.data.totalCount);
@@ -173,7 +173,7 @@ export default function ConstituencyTable() {
         const responseData = await response.json();
         //console.log("resopnse of each page ", responseData, responseData.data);
 
-        setCurrentData(sortTable(responseData.data.data, filter));
+        setCurrentData(responseData.data.data); //sortTable(responseData.data.data, filter));
         setTotalPages(Math.ceil(responseData.data.totalCount / 7));
         // setTotalPages(responseData.data.previousPage); //totalCOunt/limit
         setTotalResults(responseData.data.totalCount);
@@ -232,6 +232,7 @@ export default function ConstituencyTable() {
         select_election_year !== "Select Election year"
           ? `&years=${select_election_year}`
           : "";
+      const sortParam = isSortByAsc ? "&sort=ASC" : "&sort=DESC";
 
       const url =
         process.env.NEXT_PUBLIC_API_URL +
@@ -241,7 +242,8 @@ export default function ConstituencyTable() {
         constituencyParam +
         yearsParams +
         `&limit=7&page=` +
-        currentPage;
+        currentPage +
+        sortParam;
       setLoading(true);
       getDataFromPageNO(url);
     }
@@ -365,6 +367,8 @@ export default function ConstituencyTable() {
   //   sortTable(currentData,filter);
   // }, [filter])
 
+  const [isSortByAsc, setIsSortByAsc] = useState(false);
+
   return (
     <div className="w-full mx-auto max-w-[1400px] pt-4 md:pt-8 flex flex-col gap-5 relative">
       <div>
@@ -401,8 +405,65 @@ export default function ConstituencyTable() {
                 <th className="text-[.8rem] md:text-[18px] py-6 border-2 px-2 border-[gray] border-t-[.1px]">
                   PARTY
                 </th>
-                <th className="text-[.8rem] md:text-[18px] py-6 border-2 px-2 border-[gray] border-t-[.1px]">
+                <th className="text-[.8rem] md:text-[18px] py-6 border-2 px-2 border-[gray] border-t-[.1px] relative">
                   VOTE
+                  <span className="absolute top-0 bottom-0 right-5 flex flex-col justify-center">
+                    {/* decrease 3,2,1 */}
+
+                    <svg
+                      onClick={
+                        isSortByAsc
+                          ? () => {
+                              setCallNextPage(true);
+                              setIsSortByAsc(false);
+                            }
+                          : () => {}
+                      }
+                      className={clsx("w-6 h-6 hover:fill-red-600", {
+                        "fill-red-600 ": !isSortByAsc,
+                        "fill-red-500 cursor-pointer": isSortByAsc,
+                      })}
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5.575 13.729C4.501 15.033 5.43 17 7.12 17h9.762c1.69 0 2.618-1.967 1.544-3.271l-4.881-5.927a2 2 0 0 0-3.088 0l-4.88 5.927Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+
+                    {/* increase 1,2,3 */}
+
+                    <svg
+                      onClick={
+                        !isSortByAsc
+                          ? () => {
+                              setCallNextPage(true);
+                              setIsSortByAsc(true);
+                            }
+                          : () => {}
+                      }
+                      className={clsx("w-6 h-6 -mt-2 hover:fill-green-600  ", {
+                        "fill-green-600 ": isSortByAsc,
+                        "fill-green-500 cursor-pointer": !isSortByAsc,
+                      })}
+                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18.425 10.271C19.499 8.967 18.57 7 16.88 7H7.12c-1.69 0-2.618 1.967-1.544 3.271l4.881 5.927a2 2 0 0 0 3.088 0l4.88-5.927Z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </span>
                 </th>
                 <th className="text-[.8rem] md:text-[18px] py-6 border-2 px-2 border-[gray] border-t-[.1px]">
                   VOTE%
